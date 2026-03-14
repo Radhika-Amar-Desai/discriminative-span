@@ -34,7 +34,7 @@ def setup_logger(log_file):
 
     formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
 
-    file_handler = logging.FileHandler(log_file)
+    file_handler = logging.FileHandler(log_file, encoding="utf-8")
     file_handler.setFormatter(formatter)
 
     console_handler = logging.StreamHandler(sys.stdout)
@@ -69,13 +69,19 @@ def load_embeddings(folder):
     labels = []
     paths = []
 
-    classes = sorted(os.listdir(folder))
+    classes = [
+        d for d in sorted(os.listdir(folder))
+        if os.path.isdir(os.path.join(folder, d))
+    ]
 
     for label_idx, class_name in enumerate(classes):
 
         class_dir = os.path.join(folder, class_name)
 
-        files = os.listdir(class_dir)
+        files = [
+            f for f in os.listdir(class_dir)
+            if f.endswith(".npy")
+        ]
 
         for file in files:
 
@@ -124,6 +130,27 @@ def process_embedding_folder(embedding_folder, output_folder, C_VALUE, logger):
 
     logger.info(f"Loaded embeddings shape: {X.shape}")
 
+    # ------------------------------------------------
+    # Embedding dimensionality analysis
+    # ------------------------------------------------
+
+    total_dims = X.shape[1]
+
+    nonzero_mask = np.any(X != 0, axis=0)
+
+    active_dims = np.sum(nonzero_mask)
+
+    zero_dims = total_dims - active_dims
+
+    logger.info("Embedding dimensional analysis")
+    logger.info(f"Total embedding dimensions : {total_dims}")
+    logger.info(f"Active (non-zero) dims     : {active_dims}")
+    logger.info(f"Completely zero dims       : {zero_dims}")
+
+    # ------------------------------------------------
+    # Train L1 Logistic Regression
+    # ------------------------------------------------
+
     clf = LogisticRegression(
         penalty="l1",
         solver="liblinear",
@@ -137,8 +164,12 @@ def process_embedding_folder(embedding_folder, output_folder, C_VALUE, logger):
 
     non_zero = np.sum(weights != 0)
 
-    logger.info(f"Feature dimensions: {len(weights)}")
-    logger.info(f"Non-zero weights: {non_zero}")
+    logger.info(f"Classifier feature dimensions : {len(weights)}")
+    logger.info(f"Non-zero classifier weights   : {non_zero}")
+
+    # ------------------------------------------------
+    # Evaluate
+    # ------------------------------------------------
 
     preds = clf.predict(X)
 
@@ -152,11 +183,19 @@ def process_embedding_folder(embedding_folder, output_folder, C_VALUE, logger):
     logger.info(f"Recall    : {recall:.4f}")
     logger.info(f"F1 Score  : {f1:.4f}")
 
+    # ------------------------------------------------
+    # Scale embeddings using classifier weights
+    # ------------------------------------------------
+
     scaled_embeddings = X * weights
 
     save_scaled_embeddings(paths, scaled_embeddings, output_folder)
 
     logger.info(f"Scaled embeddings saved to {output_folder}")
+
+    # ------------------------------------------------
+    # Save classifier + weights
+    # ------------------------------------------------
 
     joblib.dump(clf, os.path.join(output_folder, "classifier.joblib"))
     np.save(os.path.join(output_folder, "weights.npy"), weights)
