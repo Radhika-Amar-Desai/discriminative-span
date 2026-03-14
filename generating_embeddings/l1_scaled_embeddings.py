@@ -148,6 +148,23 @@ def process_embedding_folder(embedding_folder, output_folder, C_VALUE, logger):
     logger.info(f"Completely zero dims       : {zero_dims}")
 
     # ------------------------------------------------
+    # Select 50% subset for L1 training
+    # ------------------------------------------------
+
+    rng = np.random.default_rng(42)
+
+    total_samples = len(X)
+
+    train_indices = rng.choice(total_samples, size=total_samples // 2, replace=False)
+
+    X_train = X[train_indices]
+    y_train = y[train_indices]
+
+    logger.info("L1 training subset selection")
+    logger.info(f"Total samples              : {total_samples}")
+    logger.info(f"Training samples used for L1 : {len(train_indices)}")
+
+    # ------------------------------------------------
     # Train L1 Logistic Regression
     # ------------------------------------------------
 
@@ -158,7 +175,7 @@ def process_embedding_folder(embedding_folder, output_folder, C_VALUE, logger):
         max_iter=1000
     )
 
-    clf.fit(X, y)
+    clf.fit(X_train, y_train)
 
     weights = clf.coef_[0]
 
@@ -168,7 +185,7 @@ def process_embedding_folder(embedding_folder, output_folder, C_VALUE, logger):
     logger.info(f"Non-zero classifier weights   : {non_zero}")
 
     # ------------------------------------------------
-    # Evaluate
+    # Evaluate classifier on ALL data
     # ------------------------------------------------
 
     preds = clf.predict(X)
@@ -178,6 +195,7 @@ def process_embedding_folder(embedding_folder, output_folder, C_VALUE, logger):
     recall = recall_score(y, preds)
     f1 = f1_score(y, preds)
 
+    logger.info("Evaluation on full dataset")
     logger.info(f"Accuracy  : {acc:.4f}")
     logger.info(f"Precision : {precision:.4f}")
     logger.info(f"Recall    : {recall:.4f}")
