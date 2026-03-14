@@ -534,6 +534,18 @@ def analyze(V, logger):
     logger.info(f"Variance first 5 PCs: {explained[:5].sum():.4f}")
     logger.info(f"Variance first 10 PCs: {explained[:10].sum():.4f}")
 
+    logger.info("\nResidual transformation analysis")
+
+    mean_vec = np.mean(V, axis=0)
+
+    V_res = V - mean_vec
+
+    cos_res = cosine_similarity(V_res)
+    upper_res = cos_res[np.triu_indices_from(cos_res, k=1)]
+
+    logger.info("Residual cosine similarity")
+    logger.info(f"mean: {upper_res.mean():.4f}")
+    logger.info(f"std: {upper_res.std():.4f}")
 
 # --------------------------------------------------
 # Model analysis
