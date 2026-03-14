@@ -1,59 +1,261 @@
-# Knowing_the_difference
+# Knowing the Difference
 
-This project is an exploratory study analyzing how difference vectors can be exploited particularly when training classifiers with synthetic data generated using image-to-image translation technique on real data.
-The project is inspired by the famous vector arthmetic operations in the field of NLP and word2vec where property:
+A geometric framework for diagnosing the usefulness of synthetic data using **difference vectors in representation space**.
+
+---
+
+## Overview
+
+Synthetic data generation has become an increasingly important tool in machine learning, particularly in domains where collecting labeled data is expensive or difficult (for example, medical imaging). Modern image-to-image translation models can generate synthetic samples that simulate how an image from one class might appear if it belonged to another class.
+
+However, a fundamental question remains:
+
+**How can we determine whether synthetic data actually captures the signal needed to learn a good classifier?**
+
+Training and evaluating multiple models to answer this question can be computationally expensive and time-consuming. This project explores an alternative approach based on the **geometry of representation spaces**.
+
+Inspired by the well-known vector arithmetic observed in word embeddings (Word2Vec), where semantic relationships emerge through vector differences:
+
 ```
-king - man + queen = woman
+king − man + woman ≈ queen
 ```
-stands true.
 
-Here difference vector refers to the difference of vectors of image pairs. An image pair constitutes of a real image, and a synthetic image obtained via image-to-image translation.
-Our hypothesis is that these difference vectors influence the decision boundary for the given binary classification task.
+we investigate whether **difference vectors between real and synthetic images encode meaningful semantic transformations in visual representation spaces**.
 
-For a binary classification task with classes A and B, we take the real data points from class A and apply image to image translation process to obtain corresponding images in class B. Basically if this image
-belonged to class B what would it look like. For example, if the given binary classification task is to differentiate between a chest X-ray of a healthy patient vs chest X-ray of a pneumonia patient. We obtain
-synthetic images for pneumonia by incorporating consolidation patterns in each image of chest X-rays belonging to the healthy class.
+If synthetic data correctly captures the transformation between classes, these difference vectors should collectively explain the **decision boundary of a classifier trained on real data**.
 
-We define ```x' = x + c * w``` where x belongs to class A and x' is synthetic data obtained via image-to-image translation technique. w stands for normal of the ideal decision boundary.
+---
 
-Now a matrix of difference vectors is obtained as D with ```x' - x``` as rows of D. We then solve least square solution Ax = B but with A = D, B = normal of the ideal decision boundary.
-Since it is impossible to determine the perfect and ideal decision boundary, we take the decision boundary of model trained on real data as the proxy for the ideal decision boundary.
+## Geometric Intuition
 
-To simplify things further, we take embeddings from pre-trained model or foundational model to be able to treat x and x' as vectors instead of raw images. In order to determine the ideal decision boundary,
-the model used to train the real data points is a linear classifier with decision boundary ```bash wT * x + b = 0```
+The core idea can be understood geometrically.
 
-Finally the equation we are trying to solve becomes:
-```D^T * alpha = w ``` where D = difference vector matrix, w = normal to decision boundary.
+We embed images into a representation space using a pretrained vision model. For each real image `x`, we generate a synthetic counterpart `x'` representing how that image would appear if it belonged to the opposite class.
 
-This is a test to answer if the differnece vectors can form a linear combination that contains the ideal decision boundary. Since foundational model embeddings are being used, we believe that difference vector
-symbolize semantic meaning or concepts. So are the concepts represented in my synthetic data capable of representing the actual signal which differentiates the two classes ?
+The **difference vector**
 
-If this is so, there exists a model that when trained on synthetic data performs nearly as well as model trained on real data. If not, then it is almost impossible to find such a model and model trained on
-real data will significantly perform better than the model trained on synthetic data.
+```
+d = x' − x
+```
 
-This allows us to exploit difference vectors to be used as a model agnoistic tool for diagnosis of data quality of synthetic data and get an intution on whether or not it is worth investing in model development
-using our synthetic data. In order to assign a quantative score, we calculate the projection error and obtain an explanation fraction.
+represents the transformation applied to the image.
 
-We try solving: ```D^T * alpha = w``` and obtain a value for ```alpha```. Now we have ```w' = D^T * alpha```.
-We calculate ```projection error = w.w' / ||w|| * ||w'||``` and ```explanation fraction = 1 - projection error```
+If the synthetic transformation correctly captures the class difference, these vectors should align with the direction separating the classes — the **decision boundary normal `w`**.
 
-## Playing with the tool
+---
 
-The primary motivation of this mathematical tool remains solving the problem of diagnosing whether or not my synthetic data can help me build a model as good as my real data. However, we also believe that
-there are some other potential applications that data scientists may use this tool for.
+**Interpretation**
 
-### Commenting on representation drift
+- Difference vectors represent **semantic transformations**
+- These vectors form the **difference matrix `D`**
+- We test whether these transformations explain the **decision boundary**
 
-Instead of foundational model embeddings for this analysis, data scientists can perform analysis on both foundational model embeddings and embeddings of model they intend to train or fine tune. For example,
-if we plan to finetune pretrained resnet-18. We test on pretrained resnet-18 model embeddings. If it happens, that we have a high score for analysis done using foundational model embedding and low score using 
-resnet-18 embeddings, then we can say that there is possibility of major shifting of the subspace or manifold currently occupied by the data during training. This can help understand possibilities of represenation
-shift during training.
+---
 
-### Domain adaptation
+## Core Idea
 
-After solving the least squares equation, the alpha used can be used for weighing the samples during training. Normally we treat every data point as equally important while training our model. In order to adapt the
-model trained on synthetic data to real data, we can weigh the samples by corresponding alpha values during training. The alpha values maybe re-computed mid training like training after every R epochs.
+Consider a **binary classification task** with classes **A** and **B**.
 
-### Coreset selection
+For each real image belonging to class **A**, we generate a synthetic image representing how the same image would appear if it belonged to class **B** using an image-to-image translation model.
 
-We can modify the gradmatch algo used for coreset selection by replacing gradients with difference vectors in order to select a representative coreset.
+Example:
+
+```
+Healthy chest X-ray → synthetic pneumonia X-ray
+```
+
+Each pair forms an image pair, and we define the difference vector
+
+```
+d = x' − x
+```
+
+This vector represents the transformation applied to move the sample from class **A toward class B** in representation space.
+
+Our hypothesis is that these transformation vectors capture the **semantic direction separating the two classes**.
+
+---
+
+## Representation Space
+
+Rather than working with raw images, we extract embeddings using a pretrained foundation model such as:
+
+- CLIP
+- DINO / DINOv2
+- other vision encoders
+
+Each image is represented as a vector
+
+```
+x, x' ∈ ℝ^d
+```
+
+where `d` is the embedding dimension.
+
+For each pair we compute
+
+```
+d_i = x'_i − x_i
+```
+
+Stacking these vectors produces the **difference matrix**
+
+```
+D = [ d1
+      d2
+      ...
+      dn ]
+```
+
+where
+
+```
+D ∈ ℝ^(n × d)
+```
+
+and `n` is the number of real–synthetic pairs.
+
+---
+
+## Decision Boundary
+
+To approximate the true class separation, we train a **linear classifier on real data**.
+
+The classifier defines the decision boundary
+
+```
+wᵀx + b = 0
+```
+
+where
+
+- `w` is the **normal vector of the decision boundary**
+- `b` is the **bias term**
+
+Since the true optimal boundary is unknown, we use the boundary learned from real data as a **proxy**.
+
+---
+
+## Hypothesis
+
+If synthetic transformations correctly capture the semantic difference between classes, the decision boundary normal should lie within the **span of the difference vectors**.
+
+Formally:
+
+```
+w ≈ Dᵀ α
+```
+
+where
+
+- `D` is the difference vector matrix
+- `α` are coefficients representing the contribution of each difference vector
+
+We estimate `α` by solving the **least squares problem**
+
+```
+min_α || Dᵀα − w ||²
+```
+
+This produces
+
+```
+w' = Dᵀ α
+```
+
+which represents the component of the decision boundary explained by the synthetic transformations.
+
+---
+
+## Explanation Score
+
+To measure how well the difference vectors explain the decision boundary, we compute the **cosine similarity** between `w` and `w'`:
+
+```
+Explanation Score =
+(w · w') / (||w|| ||w'||)
+```
+
+### Interpretation
+
+| Score | Meaning |
+|------|------|
+| Close to **1** | Synthetic transformations explain the decision boundary |
+| Close to **0** | Synthetic data does not capture the true class signal |
+
+This provides a **quantitative measure of synthetic data quality**.
+
+---
+
+## Interpretation
+
+### High Explanation Score
+
+If the difference vectors align well with the decision boundary:
+
+- Synthetic transformations capture the **true semantic direction between classes**
+- Models trained on synthetic data should perform **similarly to models trained on real data**
+
+### Low Explanation Score
+
+If alignment is weak:
+
+- Synthetic data fails to represent the **real class separation**
+- Models trained on synthetic data will likely perform **significantly worse**
+
+---
+
+## Why This Matters
+
+Evaluating synthetic datasets typically requires **training multiple models**, which is expensive and time-consuming.
+
+This framework offers a **model-agnostic diagnostic tool** that analyzes the geometry of representation spaces to determine whether synthetic data contains the signal needed to learn an accurate classifier.
+
+This allows practitioners to estimate the usefulness of synthetic data **before investing heavily in model development**.
+
+---
+
+## Potential Applications
+
+### Synthetic Data Quality Diagnosis
+
+The primary goal of this work is diagnosing whether synthetic datasets generated through **image-to-image translation** can support high-quality model training.
+
+### Representation Drift
+
+The analysis can be performed using different embedding spaces:
+
+- embeddings from a **foundation model**
+- embeddings from a **model being fine-tuned**
+
+Large differences in explanation score may indicate **representation drift during training**.
+
+### Domain Adaptation
+
+The coefficients obtained from the least squares solution indicate the **relative importance of each transformation vector**.
+
+These coefficients could potentially be used to **weight synthetic training samples**, improving alignment with the true decision boundary.
+
+### Coreset Selection
+
+Difference vectors may also be used for **data subset selection**.
+
+Gradient-based coreset selection algorithms such as **GradMatch** could potentially be adapted by replacing gradients with difference vectors to identify representative samples.
+
+---
+
+## Summary
+
+This project investigates whether semantic transformations generated by **image-to-image translation** correspond to meaningful directions in representation space.
+
+By analyzing **difference vectors between real and synthetic image pairs**, we attempt to determine whether synthetic data captures the signal required to learn accurate classifiers.
+
+If successful, this framework provides a **simple geometric method for diagnosing the usefulness of synthetic datasets before expensive model training**.
+
+---
+
+## Status
+
+This repository contains an **ongoing exploratory study** investigating the geometric structure of synthetic transformations in representation spaces.
+
+Experiments and methodology are **actively evolving**.
