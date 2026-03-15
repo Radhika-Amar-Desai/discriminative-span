@@ -122,9 +122,119 @@ def save_scaled_embeddings(paths, scaled_embeddings, output_folder):
 # Train + scale pipeline
 # -----------------------------------------------------
 
-def process_embedding_folder(embedding_folder, output_folder, C_VALUE, logger):
+# def process_embedding_folder(embedding_folder, output_folder, C_VALUE, logger):
+
+#     logger.info(f"Processing embeddings: {embedding_folder}")
+
+#     X, y, classes, paths = load_embeddings(embedding_folder)
+
+#     logger.info(f"Loaded embeddings shape: {X.shape}")
+
+#     # ------------------------------------------------
+#     # Embedding dimensionality analysis
+#     # ------------------------------------------------
+
+#     total_dims = X.shape[1]
+
+#     nonzero_mask = np.any(X != 0, axis=0)
+
+#     active_dims = np.sum(nonzero_mask)
+
+#     zero_dims = total_dims - active_dims
+
+#     logger.info("Embedding dimensional analysis")
+#     logger.info(f"Total embedding dimensions : {total_dims}")
+#     logger.info(f"Active (non-zero) dims     : {active_dims}")
+#     logger.info(f"Completely zero dims       : {zero_dims}")
+
+#     # ------------------------------------------------
+#     # Select 50% subset for L1 training
+#     # ------------------------------------------------
+
+#     rng = np.random.default_rng(42)
+
+#     total_samples = len(X)
+
+#     train_indices = rng.choice(total_samples, size=total_samples // 2, replace=False)
+
+#     X_train = X[train_indices]
+#     y_train = y[train_indices]
+
+#     logger.info("L1 training subset selection")
+#     logger.info(f"Total samples              : {total_samples}")
+#     logger.info(f"Training samples used for L1 : {len(train_indices)}")
+
+#     # ------------------------------------------------
+#     # Train L1 Logistic Regression
+#     # ------------------------------------------------
+
+#     clf = LogisticRegression(
+#         penalty="l1",
+#         solver="liblinear",
+#         C=C_VALUE,
+#         max_iter=1000
+#     )
+
+#     clf.fit(X_train, y_train)
+
+#     weights = clf.coef_[0]
+
+#     non_zero = np.sum(weights != 0)
+
+#     logger.info(f"Classifier feature dimensions : {len(weights)}")
+#     logger.info(f"Non-zero classifier weights   : {non_zero}")
+
+#     # ------------------------------------------------
+#     # Evaluate classifier on ALL data
+#     # ------------------------------------------------
+
+#     preds = clf.predict(X)
+
+#     acc = accuracy_score(y, preds)
+#     precision = precision_score(y, preds)
+#     recall = recall_score(y, preds)
+#     f1 = f1_score(y, preds)
+
+#     logger.info("Evaluation on full dataset")
+#     logger.info(f"Accuracy  : {acc:.4f}")
+#     logger.info(f"Precision : {precision:.4f}")
+#     logger.info(f"Recall    : {recall:.4f}")
+#     logger.info(f"F1 Score  : {f1:.4f}")
+
+#     # ------------------------------------------------
+#     # Scale embeddings using classifier weights
+#     # ------------------------------------------------
+
+#     scaled_embeddings = X * weights
+
+#     save_scaled_embeddings(paths, scaled_embeddings, output_folder)
+
+#     logger.info(f"Scaled embeddings saved to {output_folder}")
+
+#     # ------------------------------------------------
+#     # Save classifier + weights
+#     # ------------------------------------------------
+
+#     joblib.dump(clf, os.path.join(output_folder, "classifier.joblib"))
+#     np.save(os.path.join(output_folder, "weights.npy"), weights)
+
+#     logger.info("Classifier and weights saved")
+
+# -----------------------------------------------------
+# Train / Load classifier + scale pipeline
+# -----------------------------------------------------
+
+def process_embedding_folder(
+    model_name,
+    embedding_folder,
+    output_folder,
+    C_VALUE,
+    config,
+    logger
+):
 
     logger.info(f"Processing embeddings: {embedding_folder}")
+    logger.info(f"Model name: {model_name}")
 
     X, y, classes, paths = load_embeddings(embedding_folder)
 
@@ -148,44 +258,78 @@ def process_embedding_folder(embedding_folder, output_folder, C_VALUE, logger):
     logger.info(f"Completely zero dims       : {zero_dims}")
 
     # ------------------------------------------------
-    # Select 50% subset for L1 training
+    # Check if classifier already exists in config
     # ------------------------------------------------
 
-    rng = np.random.default_rng(42)
+    model_attr = f"{model_name}_joblib_model"
+    weight_attr = f"{model_name}_weights_file"
 
-    total_samples = len(X)
+    use_pretrained = hasattr(config, model_attr) and hasattr(config, weight_attr)
 
-    train_indices = rng.choice(total_samples, size=total_samples // 2, replace=False)
+    if use_pretrained:
 
-    X_train = X[train_indices]
-    y_train = y[train_indices]
+        logger.info("Pretrained classifier detected in config")
 
-    logger.info("L1 training subset selection")
-    logger.info(f"Total samples              : {total_samples}")
-    logger.info(f"Training samples used for L1 : {len(train_indices)}")
+        model_path = getattr(config, model_attr)
+        weights_path = getattr(config, weight_attr)
+
+        logger.info(f"Loading classifier from {model_path}")
+        logger.info(f"Loading weights from {weights_path}")
+
+        clf = joblib.load(model_path)
+        weights = np.load(weights_path)
+
+    else:
+
+        logger.info("No pretrained classifier found — training L1 Logistic Regression")
+
+        # ------------------------------------------------
+        # Select 50% subset for L1 training
+        # ------------------------------------------------
+
+        rng = np.random.default_rng(42)
+
+        total_samples = len(X)
+
+        train_indices = rng.choice(total_samples, size=total_samples // 2, replace=False)
+
+        X_train = X[train_indices]
+        y_train = y[train_indices]
+
+        logger.info("L1 training subset selection")
+        logger.info(f"Total samples              : {total_samples}")
+        logger.info(f"Training samples used for L1 : {len(train_indices)}")
+
+        # ------------------------------------------------
+        # Train classifier
+        # ------------------------------------------------
+
+        clf = LogisticRegression(
+            penalty="l1",
+            solver="liblinear",
+            C=C_VALUE,
+            max_iter=1000
+        )
+
+        clf.fit(X_train, y_train)
+
+        weights = clf.coef_[0]
+
+        non_zero = np.sum(weights != 0)
+
+        logger.info(f"Classifier feature dimensions : {len(weights)}")
+        logger.info(f"Non-zero classifier weights   : {non_zero}")
+
+        # Save trained classifier
+        os.makedirs(output_folder, exist_ok=True)
+
+        joblib.dump(clf, os.path.join(output_folder, "classifier.joblib"))
+        np.save(os.path.join(output_folder, "weights.npy"), weights)
+
+        logger.info("Classifier and weights saved")
 
     # ------------------------------------------------
-    # Train L1 Logistic Regression
-    # ------------------------------------------------
-
-    clf = LogisticRegression(
-        penalty="l1",
-        solver="liblinear",
-        C=C_VALUE,
-        max_iter=1000
-    )
-
-    clf.fit(X_train, y_train)
-
-    weights = clf.coef_[0]
-
-    non_zero = np.sum(weights != 0)
-
-    logger.info(f"Classifier feature dimensions : {len(weights)}")
-    logger.info(f"Non-zero classifier weights   : {non_zero}")
-
-    # ------------------------------------------------
-    # Evaluate classifier on ALL data
+    # Evaluate classifier
     # ------------------------------------------------
 
     preds = clf.predict(X)
@@ -202,7 +346,7 @@ def process_embedding_folder(embedding_folder, output_folder, C_VALUE, logger):
     logger.info(f"F1 Score  : {f1:.4f}")
 
     # ------------------------------------------------
-    # Scale embeddings using classifier weights
+    # Scale embeddings
     # ------------------------------------------------
 
     scaled_embeddings = X * weights
@@ -210,16 +354,6 @@ def process_embedding_folder(embedding_folder, output_folder, C_VALUE, logger):
     save_scaled_embeddings(paths, scaled_embeddings, output_folder)
 
     logger.info(f"Scaled embeddings saved to {output_folder}")
-
-    # ------------------------------------------------
-    # Save classifier + weights
-    # ------------------------------------------------
-
-    joblib.dump(clf, os.path.join(output_folder, "classifier.joblib"))
-    np.save(os.path.join(output_folder, "weights.npy"), weights)
-
-    logger.info("Classifier and weights saved")
-
 
 # -----------------------------------------------------
 # Main
@@ -256,24 +390,51 @@ def main():
     # Process each embedding space
     # ------------------------------------------------
 
+    # process_embedding_folder(
+    #     config.DINOV2_EMBEDDING_FOLDER,
+    #     config.L1_SCALED_DINOV2_EMBEDDING_FOLDER,
+    #     C_VALUE,
+    #     logger
+    # )
+
+    # process_embedding_folder(
+    #     config.RESNET18_EMBEDDING_FOLDER,
+    #     config.L1_SCALED_RESNET18_EMBEDDING_FOLDER,
+    #     C_VALUE,
+    #     logger
+    # )
+
+    # process_embedding_folder(
+    #     config.CLIP_EMBEDDING_FOLDER,
+    #     config.L1_SCALED_CLIP_EMBEDDING_FOLDER,
+    #     C_VALUE,
+    #     logger
+    # )
+
     process_embedding_folder(
+        "DINOV2",
         config.DINOV2_EMBEDDING_FOLDER,
         config.L1_SCALED_DINOV2_EMBEDDING_FOLDER,
         C_VALUE,
+        config,
         logger
     )
 
     process_embedding_folder(
+        "RESNET18",
         config.RESNET18_EMBEDDING_FOLDER,
         config.L1_SCALED_RESNET18_EMBEDDING_FOLDER,
         C_VALUE,
+        config,
         logger
     )
 
     process_embedding_folder(
+        "CLIP",
         config.CLIP_EMBEDDING_FOLDER,
         config.L1_SCALED_CLIP_EMBEDDING_FOLDER,
         C_VALUE,
+        config,
         logger
     )
 
