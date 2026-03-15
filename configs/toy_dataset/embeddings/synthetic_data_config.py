@@ -1,5 +1,6 @@
 import os
 
+
 DATASET_NAME = "skin_lesion"
 DATASET_PATH = r"C:\Users\97433\Knowing_the_difference\data\datasets\toy_dataset"
 
