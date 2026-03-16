@@ -43,13 +43,13 @@ C_VALUE = 1.0
 
 
 
-L1_SCALED_DINOV2_EMBEDDING_FOLDER =     os.path.join(SYNTHETIC_DATA_DIR, "l1_scaled", r"halved_l1_scaled_dinov2")
-L1_SCALED_RESNET18_EMBEDDING_FOLDER =   os.path.join(SYNTHETIC_DATA_DIR, "l1_scaled", r"halved_l1_scaled_resnet18")
-L1_SCALED_CLIP_EMBEDDING_FOLDER =       os.path.join(SYNTHETIC_DATA_DIR, "l1_scaled", r"halved_l1_scaled_clip")
+L1_SCALED_DINOV2_EMBEDDING_FOLDER =     os.path.join(SYNTHETIC_DATA_DIR, "l1_scaled", r"dinov2")
+L1_SCALED_RESNET18_EMBEDDING_FOLDER =   os.path.join(SYNTHETIC_DATA_DIR, "l1_scaled", r"resnet18")
+L1_SCALED_CLIP_EMBEDDING_FOLDER =       os.path.join(SYNTHETIC_DATA_DIR, "l1_scaled", r"clip")
 
-L2_SCALED_DINOV2_EMBEDDING_FOLDER =     os.path.join(SYNTHETIC_DATA_DIR, "l2_scaled", r"halved_l2_scaled_dinov2")
-L2_SCALED_RESNET18_EMBEDDING_FOLDER =   os.path.join(SYNTHETIC_DATA_DIR, "l2_scaled", r"halved_l2_scaled_resnet18")
-L2_SCALED_CLIP_EMBEDDING_FOLDER =       os.path.join(SYNTHETIC_DATA_DIR, "l2_scaled", r"halved_l2_scaled_clip")
+L2_SCALED_DINOV2_EMBEDDING_FOLDER =     os.path.join(SYNTHETIC_DATA_DIR, "l2_scaled", r"dinov2")
+L2_SCALED_RESNET18_EMBEDDING_FOLDER =   os.path.join(SYNTHETIC_DATA_DIR, "l2_scaled", r"resnet18")
+L2_SCALED_CLIP_EMBEDDING_FOLDER =       os.path.join(SYNTHETIC_DATA_DIR, "l2_scaled", r"clip")
 
 SCALED_DINOV2_EMBEDDING_FOLDER = os.path.join(SYNTHETIC_DATA_DIR, "scaled", r"dinov2")
 SCALED_RESNET18_EMBEDDING_FOLDER = os.path.join(SYNTHETIC_DATA_DIR, "scaled", r"resnet18")
