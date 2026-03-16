@@ -405,3 +405,202 @@ Compared to the original embedding space analyzed in Experiment One, the feature
 These findings suggest that visual transformations may often be encoded in **small, specialized subspaces of the embedding representation**, and that identifying these subspaces can reveal hidden linear structure in deep visual representations.
 
 ---
+
+## Experiment Three: Feature-Weighted Embedding Space (L2 Regularization)
+
+In Experiment One, we analyzed the consistency of difference vectors directly in the **original embedding space** produced by the models.
+
+However, not all embedding dimensions contribute equally to distinguishing between the **source images** and the **transformed images**. Many dimensions may contain irrelevant information or noise unrelated to the transformation.
+
+This motivates a third experiment:
+
+> If we identify and emphasize the features most responsible for distinguishing source and transformed images, does the transformation become more linear and consistent in representation space?
+
+To investigate this, we introduce a **feature-weighted embedding space** derived from a linear classifier trained with **L2 regularization**.
+
+---
+
+### Experiment Design
+
+We use the same **toy dataset preparation strategy** as in Experiment One.
+
+1. We begin with a set of natural images (source images).
+2. For every image, we create a transformed version by **superimposing a red patch in the top-right corner**.
+3. This produces paired samples:
+
+```
+(source image) → (image + red patch)
+```
+
+
+Importantly, the transformation applied to every image is **identical**.
+
+Next, we extract embeddings for both source and transformed images using three different visual representation models:
+
+- **DINOv2** (self-supervised vision foundation model)  
+- **ResNet18** (supervised CNN backbone)  
+- **CLIP** (contrastively trained vision-language model)
+
+---
+
+### Learning Feature Importance
+
+We train a **logistic regression classifier** to distinguish between source and transformed images.
+
+The classifier has the form
+
+$$
+w^T x + b = 0
+$$
+
+
+where
+
+- $x$ is the embedding vector  
+- $w$ is the learned weight vector  
+- $b$ is the bias term  
+
+In this experiment we apply **L2 regularization**, which encourages **smooth weight distributions rather than sparsity**.
+
+As a result, most embedding dimensions receive **non-zero weights**, but their magnitudes reflect their relative contribution to detecting the transformation.
+
+The weight vector `w` therefore provides **continuous feature importance scores** across the embedding dimensions.
+
+---
+
+### Constructing a Feature-Weighted Embedding Space
+
+Using the learned weight vector, we transform the embedding space by scaling each feature dimension according to its importance.
+
+This produces a **scaled embedding space** where dimensions contributing more strongly to the classifier receive greater weight.
+
+In this transformed space, we compute difference vectors for each image pair:
+
+$$
+Δᵢ = f(x_targetᵢ) − f(x_sourceᵢ)
+$$
+
+
+where $f(.)$ now represents the **feature-weighted embedding function**.
+
+If the transformation is primarily captured by the classifier-relevant features, we expect the difference vectors to become **more aligned** in this weighted representation space.
+
+---
+
+### Results
+
+### DINOv2 (L2 Feature-Weighted Space)
+
+| Metric | Value |
+|------|------|
+| Active dimensions | **384 / 384** |
+| Mean cosine similarity | **0.758** |
+| Alignment with mean vector | **0.871** |
+| Variance explained by PC1 | **15.1%** |
+| Variance explained by first 3 PCs | **31.0%** |
+| Residual cosine similarity | **−0.0025** |
+
+### ResNet18 (L2 Feature-Weighted Space)
+
+| Metric | Value |
+|------|------|
+| Active dimensions | **512 / 512** |
+| Mean cosine similarity | **0.880** |
+| Alignment with mean vector | **0.938** |
+| Variance explained by PC1 | **10.8%** |
+| Variance explained by first 3 PCs | **26.0%** |
+| Residual cosine similarity | **−0.0037** |
+
+### CLIP (L2 Feature-Weighted Space)
+
+| Metric | Value |
+|------|------|
+| Active dimensions | **512 / 512** |
+| Mean cosine similarity | **0.918** |
+| Alignment with mean vector | **0.959** |
+| Variance explained by PC1 | **24.4%** |
+| Variance explained by first 3 PCs | **44.4%** |
+| Residual cosine similarity | **−0.0029** |
+
+---
+
+### Interpretation
+
+The results reveal several important contrasts with **Experiment Two**, where L1 regularization was used.
+
+
+### 1. L2 regularization produces dense feature usage
+
+Unlike L1 regularization, which produced **highly sparse representations**, L2 regularization distributes weight across **all embedding dimensions**.
+
+In all models:
+
+- **DINOv2:** 384 / 384 dimensions active  
+- **ResNet18:** 512 / 512 dimensions active  
+- **CLIP:** 512 / 512 dimensions active  
+
+This indicates that the classifier relies on **a distributed set of features** rather than isolating a small subset of dominant dimensions.
+
+---
+
+### 2. Difference vector alignment improves modestly
+
+Compared to the **original embedding space**, alignment between difference vectors improves moderately.
+
+Mean cosine similarity becomes:
+
+- **DINOv2:** 0.758  
+- **ResNet18:** 0.880  
+- **CLIP:** 0.918  
+
+However, this improvement is **smaller than the alignment observed with L1 weighting** in Experiment Two.
+
+This suggests that while emphasizing classifier-relevant features helps reveal structure in the transformation, **dense weighting does not isolate the transformation as effectively as sparse feature selection**.
+
+---
+
+### 3. The transformation remains moderately high-dimensional
+
+PCA analysis shows that the transformation still spreads across multiple directions.
+
+For example:
+
+- **ResNet18:** PC1 explains only **10.8%** of the variance  
+- **DINOv2:** PC1 explains **15.1%**  
+- **CLIP:** PC1 explains **24.4%**
+
+Compared to Experiment Two, the transformation is **less concentrated into a single dominant direction**.
+
+This suggests that L2 weighting retains many secondary directions that contribute to variation in the difference vectors.
+
+---
+
+### 4. Residual variation remains unstructured
+
+After subtracting the mean transformation vector, the residual cosine similarity remains near zero:
+
+```
+Residual cosine similarity ≈ 0
+```
+
+
+This indicates that once the dominant transformation component is removed, the remaining variation behaves like **uncorrelated noise**, similar to what was observed in Experiments One and Two.
+
+---
+
+### Conclusion
+
+Experiment Three demonstrates that **L2-based feature weighting provides a smoother but less selective transformation of the embedding space**.
+
+Compared to L1 regularization:
+
+- L2 weighting distributes importance across **all embedding dimensions**
+- The transformation becomes **more consistent than in the original space**, but
+- It remains **less concentrated than in the sparse L1-weighted space**
+
+These findings highlight an important distinction between the two approaches:
+
+- **L1 regularization identifies a small subspace that captures the transformation**
+- **L2 regularization spreads the transformation signal across many dimensions**
+
+This suggests that while visual transformations may be represented across many embedding features, the **most informative structure often lies in a small subset of dimensions**, which sparse methods are better able to reveal.
