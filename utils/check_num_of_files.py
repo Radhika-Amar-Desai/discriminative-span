@@ -4,3 +4,8 @@ dir = r"C:\Users\97433\Knowing_the_difference\data\datasets\pneumonia_cxr\synthe
 length = len(os.listdir(dir))
 
 print(f"The length is: {length}")
+
+dir = r"C:\Users\97433\Knowing_the_difference\data\datasets\pneumonia_cxr\synthetic_data\PNEUMONIA"
+length = len(os.listdir(dir))
+
+print(f"The length is: {length}")
