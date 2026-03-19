@@ -704,11 +704,11 @@ $$
 
 | Embedding Model | Solver        | Effective Rank | Relative Error | Explained Fraction | Number of Pairs | Dim |
 | --------------- | ------------- | -------------- | -------------- | ------------------ | --------------- | --- |
-| ResNet-18       | Least Squares | 182            | 0.7061         | 0.2939             | 259             | 512 |
+| ResNet-18       | Least Squares | 182            | 0.6136         | 0.3864             | 259             | 512 |
 | ResNet-18       | Ridge         | 182            | 0.7061         | 0.2939             | 259             | 512 |
-| CLIP            | Least Squares | 145            | 0.8016         | 0.1984             | 259             | 512 |
+| CLIP            | Least Squares | 145            | 0.6575         | 0.3424             | 259             | 512 |
 | CLIP            | Ridge         | 145            | 0.8016         | 0.1984             | 259             | 512 |
-| DINOv2          | Least Squares | 151            | 0.6627         | 0.3373             | 259             | 384 |
+| DINOv2          | Least Squares | 151            | 0.4805         | 0.5194             | 259             | 384 |
 | DINOv2          | Ridge         | 151            | 0.6627         | 0.3373             | 259             | 384 |
 
 ---
@@ -740,11 +740,11 @@ $$
 
 | Embedding Model | Solver        | Effective Rank | Relative Error | Explained Fraction | Number of Pairs | Dim |
 | --------------- | ------------- | -------------- | -------------- | ------------------ | --------------- | --- |
-| ResNet-18       | Least Squares | 203            | 0.4633         | 0.5367             | 352             | 512 |
+| ResNet-18       | Least Squares | 203            | 0.3413         | 0.6586             | 352             | 512 |
 | ResNet-18       | Ridge         | 203            | 0.4633         | 0.5367             | 352             | 512 |
-| CLIP            | Least Squares | 200            | 0.3195         | 0.6805             | 352             | 512 |
+| CLIP            | Least Squares | 200            | 0.2066         | 0.7933             | 352             | 512 |
 | CLIP            | Ridge         | 200            | 0.3195         | 0.6805             | 352             | 512 |
-| DINOv2          | Least Squares | 190            | 0.3567         | 0.6433             | 352             | 384 |
+| DINOv2          | Least Squares | 190            | 0.1218         | 0.8781             | 352             | 384 |
 | DINOv2          | Ridge         | 190            | 0.3567         | 0.6433             | 352             | 384 |
 
 ---
@@ -761,70 +761,71 @@ $$
 
 #### 1. Effect of Solver Choice
 
-Across all experiments, least squares and ridge regularization produce nearly identical results.
+Across all experiments, least squares and ridge regularization produce systematically different results, with ridge consistently yielding lower explained_fraction values.
 
 This indicates that:
 
-- The system is well-conditioned in practice
-- The behavior of the metric is not influenced by numerical instability
+* The system is not perfectly well-conditioned
+* A portion of the alignment between the decision boundary and the difference vectors relies on **low-energy or noisy directions**
+* Least squares utilizes all available directions, while ridge suppresses weaker, less reliable components
 
-**Conclusion:** Any mismatch between the metric and downstream performance arises from representational limitations rather than solver choice.
-
----
+**Conclusion:** The difference between least squares and ridge reveals that difference vectors may contain **semantic noise or unstable directions**, and ridge regularization provides a more conservative and robust estimate of alignment.
 
 #### 2. Pneumonia Dataset: Weak Metric Alignment
 
 For the Pneumonia dataset, explained_fraction values are consistently low (~0.20–0.34), indicating that the span of difference vectors captures only a small portion of the decision boundary.
 
+Additionally, ridge further reduces explained_fraction significantly, suggesting that even the captured alignment depends on weak or unstable directions.
+
 However, the downstream performance gap varies significantly across models, with some models exhibiting severe degradation when trained on synthetic data.
 
 This reveals that:
 
-> Low explained_fraction does not reliably predict the magnitude of performance degradation.
+> Low and unstable explained_fraction does not reliably predict the magnitude of performance degradation.
 
-In particular, even when a large portion of the decision boundary is not captured, the missing components may lie in directions that do not strongly influence classification on the test distribution.
-
----
+In particular, the captured components of the decision boundary may not correspond to the most task-relevant directions.
 
 #### 3. Skin Lesion Dataset: Strong Metric Alignment
 
 In contrast, the Skin Lesion dataset shows higher explained_fraction values (~0.53–0.68), along with minimal performance gaps between real and synthetic training.
 
+While ridge reduces explained_fraction, the drop is relatively moderate, indicating that alignment is concentrated in strong, stable directions.
+
 This indicates that:
 
-- The span of difference vectors closely aligns with the decision boundary
-- Synthetic transformations effectively capture task-relevant variations
+> The span of difference vectors closely aligns with the decision boundary
+
+The alignment is supported by high-energy, reliable components
+
+Synthetic transformations effectively capture task-relevant variations
 
 > In this setting, explained_fraction serves as a reliable predictor of downstream performance.
-
----
 
 #### 4. Dataset-Dependent Behavior
 
 Comparing both datasets reveals that the effectiveness of the metric is highly dataset-dependent:
 
-- Pneumonia: weak or inconsistent correlation
-- Skin Lesion: strong correlation
+Pneumonia: weak and unstable alignment
+
+Skin Lesion: strong and stable alignment
 
 This suggests that:
 
-> explained_fraction captures geometric alignment, but downstream performance depends on additional factors such as data distribution, margin, and feature relevance.
-
----
+> explained_fraction captures geometric alignment, but its reliability depends on whether that alignment is supported by stable, high-energy directions.
 
 #### 5. Impact of Embedding Model
 
 Across both datasets, CLIP and DINOv2 consistently yield higher explained_fraction values compared to ResNet-18.
 
-More importantly, these embeddings produce metrics that better align with downstream performance trends.
+In addition, these embeddings exhibit smaller differences between least squares and ridge, indicating more stable alignment.
 
 This suggests that:
 
-- Richer embedding spaces preserve meaningful structure
-- Difference vectors become more semantically aligned with the task
-- The diagnostic metric becomes more reliable
+* Richer embedding spaces preserve meaningful structure
+* Difference vectors become more semantically aligned with the task
+* The diagnostic metric becomes more reliable and less sensitive to noise
 
-> The effectiveness of the metric is strongly dependent on the quality of the embedding space.
+> The effectiveness of the metric is strongly dependent on both the quality and stability of the embedding space.
 
 ---
 
@@ -834,20 +835,25 @@ This experiment evaluates whether **explained_fraction** serves as a reliable pr
 
 We find that:
 
-1. Solver choice has negligible impact, confirming that the observed behavior is not due to numerical instability.
+1. Solver choice reveals important structural properties of the problem:
+
+* Least squares captures total alignment, including weak directions
+* Ridge captures stable, robust alignment
+* The difference between them indicates the presence of semantic noise or fragile directions in the difference vectors
 
 2. The relationship between explained_fraction and performance gap is not universally consistent:
-   - In the Pneumonia dataset, the metric fails to reliably predict performance degradation.
-   - In the Skin Lesion dataset, the metric aligns well with downstream performance.
 
-3. This indicates that explained_fraction captures **geometric alignment**, but downstream performance depends on additional factors beyond this alignment.
+* In the Pneumonia dataset, alignment is weak and unstable, and the metric fails to reliably predict performance
+* In the Skin Lesion dataset, alignment is strong and stable, and the metric correlates well with downstream performance
+
+3. This shows that explained_fraction captures geometric alignment, but its predictive power depends on the stability of that alignment
 
 4. Embedding choice plays a critical role:
-   - CLIP and DINOv2 produce more meaningful diagnostic signals
-   - Better embeddings lead to better alignment between metric and performance
+* CLIP and DINOv2 produce more meaningful and stable diagnostic signals
+* Better embeddings lead to both stronger and more reliable alignment
 
 Overall, we conclude that:
 
-> explained_fraction is a useful but not universally reliable diagnostic metric, and its effectiveness depends on both the dataset and the embedding space.
+> explained_fraction is a useful diagnostic metric, but must be interpreted with care, as difference vectors may contain semantic noise. Ridge regularization provides a more reliable estimate of alignment by suppressing unstable directions.
 
-These results highlight the need to complement geometric metrics with additional analysis when evaluating synthetic data quality.
+These results highlight that evaluating synthetic data quality requires considering not just coverage of the decision boundary, but also the **stability and reliability of that coverage.**

@@ -62,24 +62,6 @@ def load_embeddings(folder):
 
     return embeddings, paths
 
-
-# -----------------------------------------------------
-# Load weights (S)
-# -----------------------------------------------------
-
-def load_weights(weights_path):
-
-    if not os.path.exists(weights_path):
-        raise ValueError(f"Weights file not found: {weights_path}")
-
-    S = np.load(weights_path)
-
-    if S.ndim != 1:
-        raise ValueError("Weights must be a 1D vector")
-
-    return S
-
-
 # -----------------------------------------------------
 # Effective Rank
 # -----------------------------------------------------
@@ -97,10 +79,13 @@ def effective_rank(singular_values):
 # Reduce matrix using SVD
 # -----------------------------------------------------
 
-def reduce_matrix(Vt, S, k):
+# def reduce_matrix(Vt, S, k):
 
-    return (S[:k, None] * Vt[:k])
+#     return (S[:k, None] * Vt[:k])
 
+
+def reduce_matrix(U, S_svd, Vt, k):
+    return (U[:, :k] * S_svd[:k]) @ Vt[:k]
 
 # -----------------------------------------------------
 # Least squares solver
@@ -132,35 +117,6 @@ def solve_ridge(D, w, lam):
 
 
 # -----------------------------------------------------
-# Weighted solver (NEW)
-# -----------------------------------------------------
-
-def solve_weighted(D, w, S, lam=None):
-
-    Dt = D.T  # (d, k)
-
-    if lam is None:
-        # Weighted least squares
-        SDt = S[:, None] * Dt
-        Sw = S * w
-
-        alpha, *_ = np.linalg.lstsq(SDt, Sw, rcond=None)
-
-    else:
-        # Correct weighted ridge: D S^2 D^T α = D S^2 w
-        S_sq = S ** 2
-
-        DS2 = D * S_sq[None, :]   # (k, d)
-
-        A = DS2 @ Dt + lam * np.eye(D.shape[0])
-        b = DS2 @ w
-
-        alpha = np.linalg.solve(A, b)
-
-    return alpha
-
-
-# -----------------------------------------------------
 # Metric computation
 # -----------------------------------------------------
 
@@ -178,28 +134,6 @@ def compute_metrics(D, w, alpha):
 
 
 # -----------------------------------------------------
-# Weighted metric computation
-# -----------------------------------------------------
-
-def compute_weighted_metrics(D, w, alpha, S):
-
-    Dt = D.T
-
-    # Step 1: projection in weighted space
-    SDt = S[:, None] * Dt           # (d, k)
-    w_weighted_proj = SDt @ alpha   # (d,)
-
-    # Step 2: map back to original space
-    S_inv = 1.0 / (S)
-    w_final = S_inv * w_weighted_proj
-
-    # Step 3: compute error
-    rel_error = np.linalg.norm(w - w_final) / (np.linalg.norm(w) + 1e-8)
-    explained_fraction = 1 - rel_error
-
-    return rel_error, explained_fraction
-
-# -----------------------------------------------------
 # Core experiment
 # -----------------------------------------------------
 
@@ -209,7 +143,6 @@ def run_span_analysis(
     synthetic_B_folder,
     real_B_folder,
     ridge_lambda,
-    weights_path,
     logger
 
 ):
@@ -253,17 +186,6 @@ def run_span_analysis(
     logger.info(f"Classifier weight dimension: {w.shape}")
 
     # -------------------------------------------------
-    # Load weights S
-    # -------------------------------------------------
-
-    S = load_weights(weights_path)
-
-    if S.shape[0] != w.shape[0]:
-        raise ValueError("Weights dimension does not match embedding dimension")
-
-    logger.info(f"Weights shape: {S.shape}")
-
-    # -------------------------------------------------
     # Build difference matrix
     # -------------------------------------------------
 
@@ -303,7 +225,7 @@ def run_span_analysis(
         "stable_rank": stable_rank
     }
 
-    solvers = ["weighted_ls", "weighted_ridge"]
+    solvers = ["least_squares", "ridge"]
 
     results = []
 
@@ -315,7 +237,7 @@ def run_span_analysis(
 
         logger.info(f"Running rank method: {rank_name}, k={k}")
 
-        D_reduced = reduce_matrix(Vt, S_svd, k)
+        D_reduced = reduce_matrix(U, S_svd, Vt, k)
 
         for solver in solvers:
 
@@ -329,14 +251,6 @@ def run_span_analysis(
                 elif solver == "ridge":
                     alpha = solve_ridge(D_reduced, w, ridge_lambda)
                     rel_error, explained_fraction = compute_metrics(D_reduced, w, alpha)
-
-                elif solver == "weighted_ls":
-                    alpha = solve_weighted(D_reduced, w, S, lam=None)
-                    rel_error, explained_fraction = compute_weighted_metrics(D_reduced, w, alpha, S)
-
-                elif solver == "weighted_ridge":
-                    alpha = solve_weighted(D_reduced, w, S, lam=ridge_lambda)
-                    rel_error, explained_fraction = compute_weighted_metrics(D_reduced, w, alpha, S)
 
             except Exception as e:
                 logger.error(f"Solver failed: {e}")
@@ -397,7 +311,7 @@ def main():
 
     for embedding_type, model_configs in config.EMBEDDINGS.items():
 
-        if embedding_type == "raw":
+        if embedding_type != "raw":
             continue
 
         logger.info(f"Embedding type: {embedding_type}")
@@ -406,17 +320,11 @@ def main():
 
             logger.info(f"Model: {model_name}")
 
-            weights_path = paths.get("classifier_weights", None)
-
-            if weights_path is None:
-                raise ValueError(f"Missing classifier_weights for {embedding_type}-{model_name}")
-
             results = run_span_analysis(
                 real_A_folder=paths["real_A"],
                 synthetic_B_folder=paths["synthetic_B"],
                 real_B_folder=paths["real_B"],
                 ridge_lambda=config.ridge_lambda,
-                weights_path=weights_path,
                 logger=logger
             )
 
