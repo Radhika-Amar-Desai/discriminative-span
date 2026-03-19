@@ -32,9 +32,9 @@ Importantly, the transformation applied to every image is **identical**.
 
 Next, we extract embeddings for both source and transformed images using three different visual representation models:
 
-* DINOv2 (self-supervised vision foundation model)
-* ResNet18 (supervised CNN backbone)
-* CLIP (contrastively trained vision-language model)
+- DINOv2 (self-supervised vision foundation model)
+- ResNet18 (supervised CNN backbone)
+- CLIP (contrastively trained vision-language model)
 
 For each image pair we compute a **difference vector**
 
@@ -143,9 +143,9 @@ The results reveal several important observations.
 
 Across all models, the mean cosine similarity between difference vectors is significantly positive:
 
-* **DINOv2:** 0.565
-* **ResNet18:** 0.678
-* **CLIP:** 0.815
+- **DINOv2:** 0.565
+- **ResNet18:** 0.678
+- **CLIP:** 0.815
 
 This indicates that the transformation induced by adding the red patch is not random in embedding space. Instead, it produces a **consistent directional shift**.
 
@@ -157,9 +157,9 @@ The effect is strongest for CLIP, suggesting that CLIP encodes this visual modif
 
 The cosine similarity between each difference vector and the mean transformation direction is extremely high:
 
-* **DINOv2:** 0.75
-* **ResNet18:** 0.82
-* **CLIP:** 0.90
+- **DINOv2:** 0.75
+- **ResNet18:** 0.82
+- **CLIP:** 0.90
 
 This indicates that most difference vectors lie close to a **shared global direction** in embedding space.
 
@@ -173,10 +173,10 @@ This means that the transformation is **not perfectly linear**. Instead, it span
 
 This is expected because the red patch interacts with:
 
-* background textures
-* image brightness
-* local feature activations
-* receptive field structures
+- background textures
+- image brightness
+- local feature activations
+- receptive field structures
 
 which introduces variation across images.
 
@@ -240,13 +240,12 @@ We use the same **toy dataset preparation strategy** as in Experiment One.
 (source image) → (image + red patch)
 ```
 
-
 Importantly, the transformation applied to every image is **identical**.
 
 Next, we extract embeddings for both source and transformed images using three different visual representation models:
 
-- **DINOv2** (self-supervised vision foundation model)  
-- **ResNet18** (supervised CNN backbone)  
+- **DINOv2** (self-supervised vision foundation model)
+- **ResNet18** (supervised CNN backbone)
 - **CLIP** (contrastively trained vision-language model)
 
 ---
@@ -295,40 +294,40 @@ If the transformation is primarily captured by the important features, we expect
 
 ### DINOv2 (Feature-Weighted Space)
 
-| Metric | Value |
-|------|------|
-| Active dimensions | **39 / 384** |
-| Mean cosine similarity | **0.855** |
-| Alignment with mean vector | **0.925** |
-| Variance explained by PC1 | **30.3%** |
-| Variance explained by first 3 PCs | **52.9%** |
-| Residual cosine similarity | **−0.0019** |
+| Metric                            | Value        |
+| --------------------------------- | ------------ |
+| Active dimensions                 | **39 / 384** |
+| Mean cosine similarity            | **0.855**    |
+| Alignment with mean vector        | **0.925**    |
+| Variance explained by PC1         | **30.3%**    |
+| Variance explained by first 3 PCs | **52.9%**    |
+| Residual cosine similarity        | **−0.0019**  |
 
 ---
 
 ### ResNet18 (Feature-Weighted Space)
 
-| Metric | Value |
-|------|------|
-| Active dimensions | **14 / 512** |
-| Mean cosine similarity | **0.986** |
-| Alignment with mean vector | **0.993** |
-| Variance explained by PC1 | **63.6%** |
-| Variance explained by first 3 PCs | **83.1%** |
-| Residual cosine similarity | **−0.0033** |
+| Metric                            | Value        |
+| --------------------------------- | ------------ |
+| Active dimensions                 | **14 / 512** |
+| Mean cosine similarity            | **0.986**    |
+| Alignment with mean vector        | **0.993**    |
+| Variance explained by PC1         | **63.6%**    |
+| Variance explained by first 3 PCs | **83.1%**    |
+| Residual cosine similarity        | **−0.0033**  |
 
 ---
 
 ### CLIP (Feature-Weighted Space)
 
-| Metric | Value |
-|------|------|
-| Active dimensions | **8 / 512** |
-| Mean cosine similarity | **0.969** |
-| Alignment with mean vector | **0.985** |
-| Variance explained by PC1 | **48.1%** |
-| Variance explained by first 3 PCs | **90.4%** |
-| Residual cosine similarity | **−0.0032** |
+| Metric                            | Value       |
+| --------------------------------- | ----------- |
+| Active dimensions                 | **8 / 512** |
+| Mean cosine similarity            | **0.969**   |
+| Alignment with mean vector        | **0.985**   |
+| Variance explained by PC1         | **48.1%**   |
+| Variance explained by first 3 PCs | **90.4%**   |
+| Residual cosine similarity        | **−0.0032** |
 
 ---
 
@@ -342,9 +341,9 @@ The results reveal several striking patterns compared to Experiment One.
 
 L1 regularization produces extremely **sparse representations** of the transformation:
 
-- **DINOv2:** 39 active dimensions out of 384  
-- **ResNet18:** 14 active dimensions out of 512  
-- **CLIP:** 8 active dimensions out of 512  
+- **DINOv2:** 39 active dimensions out of 384
+- **ResNet18:** 14 active dimensions out of 512
+- **CLIP:** 8 active dimensions out of 512
 
 This suggests that the visual transformation introduced by the red patch is captured by **only a small subset of embedding dimensions**.
 
@@ -356,9 +355,9 @@ After transforming the embedding space using feature importance weights, the ali
 
 Mean cosine similarity becomes:
 
-- **DINOv2:** 0.855  
-- **ResNet18:** 0.986  
-- **CLIP:** 0.969  
+- **DINOv2:** 0.855
+- **ResNet18:** 0.986
+- **CLIP:** 0.969
 
 This indicates that once irrelevant dimensions are suppressed, the transformation behaves much more like a **consistent directional shift**.
 
@@ -370,8 +369,8 @@ PCA analysis shows that a much larger fraction of variance is captured by the fi
 
 For example:
 
-- **ResNet18:** PC1 explains **63.6%** of the variance  
-- **CLIP:** PC1 explains **48.1%** of the variance  
+- **ResNet18:** PC1 explains **63.6%** of the variance
+- **CLIP:** PC1 explains **48.1%** of the variance
 
 This indicates that in the feature-weighted space, the transformation is **closer to a single dominant direction**.
 
@@ -384,7 +383,6 @@ After subtracting the mean transformation vector, residual cosine similarity rem
 ```
 Residual cosine similarity ≈ 0
 ```
-
 
 This suggests that once the dominant transformation is removed, the remaining variation between difference vectors behaves like **uncorrelated noise**.
 
@@ -432,13 +430,12 @@ We use the same **toy dataset preparation strategy** as in Experiment One.
 (source image) → (image + red patch)
 ```
 
-
 Importantly, the transformation applied to every image is **identical**.
 
 Next, we extract embeddings for both source and transformed images using three different visual representation models:
 
-- **DINOv2** (self-supervised vision foundation model)  
-- **ResNet18** (supervised CNN backbone)  
+- **DINOv2** (self-supervised vision foundation model)
+- **ResNet18** (supervised CNN backbone)
 - **CLIP** (contrastively trained vision-language model)
 
 ---
@@ -453,12 +450,11 @@ $$
 w^T x + b = 0
 $$
 
-
 where
 
-- $x$ is the embedding vector  
-- $w$ is the learned weight vector  
-- $b$ is the bias term  
+- $x$ is the embedding vector
+- $w$ is the learned weight vector
+- $b$ is the bias term
 
 In this experiment we apply **L2 regularization**, which encourages **smooth weight distributions rather than sparsity**.
 
@@ -480,7 +476,6 @@ $$
 Δᵢ = f(x_targetᵢ) − f(x_sourceᵢ)
 $$
 
-
 where $f(.)$ now represents the **feature-weighted embedding function**.
 
 If the transformation is primarily captured by the classifier-relevant features, we expect the difference vectors to become **more aligned** in this weighted representation space.
@@ -491,36 +486,36 @@ If the transformation is primarily captured by the classifier-relevant features,
 
 ### DINOv2 (L2 Feature-Weighted Space)
 
-| Metric | Value |
-|------|------|
-| Active dimensions | **384 / 384** |
-| Mean cosine similarity | **0.758** |
-| Alignment with mean vector | **0.871** |
-| Variance explained by PC1 | **15.1%** |
-| Variance explained by first 3 PCs | **31.0%** |
-| Residual cosine similarity | **−0.0025** |
+| Metric                            | Value         |
+| --------------------------------- | ------------- |
+| Active dimensions                 | **384 / 384** |
+| Mean cosine similarity            | **0.758**     |
+| Alignment with mean vector        | **0.871**     |
+| Variance explained by PC1         | **15.1%**     |
+| Variance explained by first 3 PCs | **31.0%**     |
+| Residual cosine similarity        | **−0.0025**   |
 
 ### ResNet18 (L2 Feature-Weighted Space)
 
-| Metric | Value |
-|------|------|
-| Active dimensions | **512 / 512** |
-| Mean cosine similarity | **0.880** |
-| Alignment with mean vector | **0.938** |
-| Variance explained by PC1 | **10.8%** |
-| Variance explained by first 3 PCs | **26.0%** |
-| Residual cosine similarity | **−0.0037** |
+| Metric                            | Value         |
+| --------------------------------- | ------------- |
+| Active dimensions                 | **512 / 512** |
+| Mean cosine similarity            | **0.880**     |
+| Alignment with mean vector        | **0.938**     |
+| Variance explained by PC1         | **10.8%**     |
+| Variance explained by first 3 PCs | **26.0%**     |
+| Residual cosine similarity        | **−0.0037**   |
 
 ### CLIP (L2 Feature-Weighted Space)
 
-| Metric | Value |
-|------|------|
-| Active dimensions | **512 / 512** |
-| Mean cosine similarity | **0.918** |
-| Alignment with mean vector | **0.959** |
-| Variance explained by PC1 | **24.4%** |
-| Variance explained by first 3 PCs | **44.4%** |
-| Residual cosine similarity | **−0.0029** |
+| Metric                            | Value         |
+| --------------------------------- | ------------- |
+| Active dimensions                 | **512 / 512** |
+| Mean cosine similarity            | **0.918**     |
+| Alignment with mean vector        | **0.959**     |
+| Variance explained by PC1         | **24.4%**     |
+| Variance explained by first 3 PCs | **44.4%**     |
+| Residual cosine similarity        | **−0.0029**   |
 
 ---
 
@@ -528,16 +523,15 @@ If the transformation is primarily captured by the classifier-relevant features,
 
 The results reveal several important contrasts with **Experiment Two**, where L1 regularization was used.
 
-
 ### 1. L2 regularization produces dense feature usage
 
 Unlike L1 regularization, which produced **highly sparse representations**, L2 regularization distributes weight across **all embedding dimensions**.
 
 In all models:
 
-- **DINOv2:** 384 / 384 dimensions active  
-- **ResNet18:** 512 / 512 dimensions active  
-- **CLIP:** 512 / 512 dimensions active  
+- **DINOv2:** 384 / 384 dimensions active
+- **ResNet18:** 512 / 512 dimensions active
+- **CLIP:** 512 / 512 dimensions active
 
 This indicates that the classifier relies on **a distributed set of features** rather than isolating a small subset of dominant dimensions.
 
@@ -549,9 +543,9 @@ Compared to the **original embedding space**, alignment between difference vecto
 
 Mean cosine similarity becomes:
 
-- **DINOv2:** 0.758  
-- **ResNet18:** 0.880  
-- **CLIP:** 0.918  
+- **DINOv2:** 0.758
+- **ResNet18:** 0.880
+- **CLIP:** 0.918
 
 However, this improvement is **smaller than the alignment observed with L1 weighting** in Experiment Two.
 
@@ -565,8 +559,8 @@ PCA analysis shows that the transformation still spreads across multiple directi
 
 For example:
 
-- **ResNet18:** PC1 explains only **10.8%** of the variance  
-- **DINOv2:** PC1 explains **15.1%**  
+- **ResNet18:** PC1 explains only **10.8%** of the variance
+- **DINOv2:** PC1 explains **15.1%**
 - **CLIP:** PC1 explains **24.4%**
 
 Compared to Experiment Two, the transformation is **less concentrated into a single dominant direction**.
@@ -582,7 +576,6 @@ After subtracting the mean transformation vector, the residual cosine similarity
 ```
 Residual cosine similarity ≈ 0
 ```
-
 
 This indicates that once the dominant transformation component is removed, the remaining variation behaves like **uncorrelated noise**, similar to what was observed in Experiments One and Two.
 
@@ -604,3 +597,255 @@ These findings highlight an important distinction between the two approaches:
 - **L2 regularization spreads the transformation signal across many dimensions**
 
 This suggests that while visual transformations may be represented across many embedding features, the **most informative structure often lies in a small subset of dimensions**, which sparse methods are better able to reveal.
+
+---
+
+## Experiment-Four: Evaluating Metric Alignment with Downstream Performance
+
+In this experiment, we evaluate whether our diagnostic metric—**explained fraction**—is predictive of **downstream performance degradation** when training on synthetic data instead of real data.
+
+Specifically, we aim to answer:
+
+1. Does **explained_fraction** correlate with the real vs synthetic performance gap?
+2. Which **foundational embedding model** yields the most reliable diagnostic signal?
+3. Can this metric help identify settings where synthetic data is sufficient?
+
+---
+
+### Metric Definition
+
+We solve the linear system:
+
+$$
+D^T \alpha = w
+$$
+
+and compute the projected vector:
+
+$$
+w_{projected} = D^T \alpha
+$$
+
+We then define:
+
+$$
+rel\_error = \frac{||w - w_{projected}||}{||w||}
+$$
+
+$$
+explained\_fraction = 1 - rel\_error
+$$
+
+**Interpretation:**
+- **explained_fraction** measures how much of the classifier decision boundary lies within the span of the difference vectors.
+- Higher values indicate better alignment between synthetic transformations and the true decision boundary.
+
+---
+
+### Experiment Design
+
+We conduct experiments on two datasets:
+- Pneumonia Chest X-ray (CXR)
+- Skin Lesion
+
+For each dataset:
+
+1. Train classifiers (ResNet-18, EfficientNet-B0, MobileNet-V2) on:
+   - Real data
+   - Synthetic data
+
+2. Measure downstream performance gap:
+
+$$
+\Delta_{performance} = \text{Test Accuracy}_{real} - \text{Test Accuracy}_{synthetic}
+$$
+
+3. Extract the classifier weight vector  $w$
+
+4. Construct the difference matrix $D$, where each row corresponds to a pairwise difference vector.
+
+5. Solve $D^T \alpha = w$ using:
+   - Least Squares
+   - Ridge Regularization
+
+6. Compute:
+   - Relative Error
+   - Explained Fraction
+
+7. Repeat the analysis across embedding spaces:
+   - ResNet-18 (supervised)
+   - CLIP (multimodal)
+   - DINOv2 (self-supervised)
+
+---
+
+### Results
+
+---
+
+### 1. Pneumonia CXR
+
+#### 1.1 Downstream Performance
+
+| Model           | Training Data   | Train Acc | Train F1 | Test Acc | Test F1 | Δ Test Acc (Real - Synth) |
+|----------------|----------------|-----------|----------|----------|---------|----------------------------|
+| ResNet-18      | Real           | 0.9885    | 0.9881   | 0.9106   | 0.9366  | —                          |
+| ResNet-18      | Synthetic      | 0.9973    | 0.9972   | 0.5596   | 0.5751  | **0.3510**                 |
+| MobileNet-V2   | Real           | 0.9969    | 0.9968   | 0.9768   | 0.9844  | —                          |
+| MobileNet-V2   | Synthetic      | 0.8800    | 0.8901   | 0.8135   | 0.8689  | **0.1633**                 |
+| EfficientNet-B0| Real           | 0.9943    | 0.9941   | 0.9724   | 0.9814  | —                          |
+| EfficientNet-B0| Synthetic      | 0.9237    | 0.9272   | 0.8709   | 0.9101  | **0.1015**                 |
+
+---
+
+#### 1.2 Diagnostic Metrics (Embedding Space Analysis)
+
+| Embedding Model | Solver         | Effective Rank | Relative Error | Explained Fraction | Number of Pairs | Dim |
+|-----------------|---------------|----------------|----------------|--------------------|--------|-----|
+| ResNet-18       | Least Squares | 182            | 0.7061         | 0.2939             | 259    | 512 |
+| ResNet-18       | Ridge         | 182            | 0.7061         | 0.2939             | 259    | 512 |
+| CLIP            | Least Squares | 145            | 0.8016         | 0.1984             | 259    | 512 |
+| CLIP            | Ridge         | 145            | 0.8016         | 0.1984             | 259    | 512 |
+| DINOv2          | Least Squares | 151            | 0.6627         | 0.3373             | 259    | 384 |
+| DINOv2          | Ridge         | 151            | 0.6627         | 0.3373             | 259    | 384 |
+
+---
+
+#### 1.3 Summary
+
+- Explained fraction ranges from **0.20 to 0.34**
+- Performance gap ranges from **0.10 to 0.35**
+- Weak and inconsistent alignment between metric and downstream performance
+
+---
+
+### 2. Skin Lesion Dataset
+
+#### 2.1 Downstream Performance
+
+| Model           | Training Data   | Train Acc | Train F1 | Test Acc | Test F1 | Δ Test Acc (Real - Synth) |
+|----------------|----------------|-----------|----------|----------|---------|----------------------------|
+| ResNet-18      | Real           | 0.9986    | 0.9986   | 0.9651   | 0.9655  | —                          |
+| ResNet-18      | Synthetic      | 0.8097    | 0.7705   | 0.9302   | 0.9231  | **0.0349**                 |
+| MobileNet-V2   | Real           | 1.0000    | 1.0000   | 0.9767   | 0.9767  | —                          |
+| MobileNet-V2   | Synthetic      | 0.9972    | 0.9972   | 0.9302   | 0.9231  | **0.0465**                 |
+| EfficientNet-B0| Real           | 0.9957    | 0.9957   | 0.7907   | 0.8125  | —                          |
+| EfficientNet-B0| Synthetic      | 0.9503    | 0.9477   | 0.7791   | 0.8000  | **0.0116**                 |
+
+---
+
+#### 2.2 Diagnostic Metrics (Embedding Space Analysis)
+
+| Embedding Model | Solver         | Effective Rank | Relative Error | Explained Fraction | Number of Pairs | Dim |
+|-----------------|---------------|----------------|----------------|--------------------|--------|-----|
+| ResNet-18       | Least Squares | 203            | 0.4633         | 0.5367             | 352    | 512 |
+| ResNet-18       | Ridge         | 203            | 0.4633         | 0.5367             | 352    | 512 |
+| CLIP            | Least Squares | 200            | 0.3195         | 0.6805             | 352    | 512 |
+| CLIP            | Ridge         | 200            | 0.3195         | 0.6805             | 352    | 512 |
+| DINOv2          | Least Squares | 190            | 0.3567         | 0.6433             | 352    | 384 |
+| DINOv2          | Ridge         | 190            | 0.3567         | 0.6433             | 352    | 384 |
+
+---
+
+#### 2.3 Summary
+
+- Explained fraction ranges from **0.53 to 0.68**
+- Performance gap ranges from **0.01 to 0.05**
+- Strong alignment between metric and downstream performance
+
+---
+
+### Interpretation
+
+#### 1. Effect of Solver Choice
+
+Across all experiments, least squares and ridge regularization produce nearly identical results.
+
+This indicates that:
+- The system is well-conditioned in practice
+- The behavior of the metric is not influenced by numerical instability
+
+**Conclusion:** Any mismatch between the metric and downstream performance arises from representational limitations rather than solver choice.
+
+---
+
+#### 2. Pneumonia Dataset: Weak Metric Alignment
+
+For the Pneumonia dataset, explained_fraction values are consistently low (~0.20–0.34), indicating that the span of difference vectors captures only a small portion of the decision boundary.
+
+However, the downstream performance gap varies significantly across models, with some models exhibiting severe degradation when trained on synthetic data.
+
+This reveals that:
+
+> Low explained_fraction does not reliably predict the magnitude of performance degradation.
+
+In particular, even when a large portion of the decision boundary is not captured, the missing components may lie in directions that do not strongly influence classification on the test distribution.
+
+---
+
+#### 3. Skin Lesion Dataset: Strong Metric Alignment
+
+In contrast, the Skin Lesion dataset shows higher explained_fraction values (~0.53–0.68), along with minimal performance gaps between real and synthetic training.
+
+This indicates that:
+
+- The span of difference vectors closely aligns with the decision boundary
+- Synthetic transformations effectively capture task-relevant variations
+
+> In this setting, explained_fraction serves as a reliable predictor of downstream performance.
+
+---
+
+#### 4. Dataset-Dependent Behavior
+
+Comparing both datasets reveals that the effectiveness of the metric is highly dataset-dependent:
+
+- Pneumonia: weak or inconsistent correlation
+- Skin Lesion: strong correlation
+
+This suggests that:
+
+> explained_fraction captures geometric alignment, but downstream performance depends on additional factors such as data distribution, margin, and feature relevance.
+
+---
+
+#### 5. Impact of Embedding Model
+
+Across both datasets, CLIP and DINOv2 consistently yield higher explained_fraction values compared to ResNet-18.
+
+More importantly, these embeddings produce metrics that better align with downstream performance trends.
+
+This suggests that:
+
+- Richer embedding spaces preserve meaningful structure
+- Difference vectors become more semantically aligned with the task
+- The diagnostic metric becomes more reliable
+
+> The effectiveness of the metric is strongly dependent on the quality of the embedding space.
+
+---
+
+### Conclusion
+
+This experiment evaluates whether **explained_fraction** serves as a reliable predictor of downstream performance when training on synthetic data.
+
+We find that:
+
+1. Solver choice has negligible impact, confirming that the observed behavior is not due to numerical instability.
+
+2. The relationship between explained_fraction and performance gap is not universally consistent:
+   - In the Pneumonia dataset, the metric fails to reliably predict performance degradation.
+   - In the Skin Lesion dataset, the metric aligns well with downstream performance.
+
+3. This indicates that explained_fraction captures **geometric alignment**, but downstream performance depends on additional factors beyond this alignment.
+
+4. Embedding choice plays a critical role:
+   - CLIP and DINOv2 produce more meaningful diagnostic signals
+   - Better embeddings lead to better alignment between metric and performance
+
+Overall, we conclude that:
+
+> explained_fraction is a useful but not universally reliable diagnostic metric, and its effectiveness depends on both the dataset and the embedding space.
+
+These results highlight the need to complement geometric metrics with additional analysis when evaluating synthetic data quality.
+
