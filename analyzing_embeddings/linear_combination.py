@@ -64,6 +64,23 @@ def load_embeddings(folder):
 
 
 # -----------------------------------------------------
+# Load weights (S)
+# -----------------------------------------------------
+
+def load_weights(weights_path):
+
+    if not os.path.exists(weights_path):
+        raise ValueError(f"Weights file not found: {weights_path}")
+
+    S = np.load(weights_path)
+
+    if S.ndim != 1:
+        raise ValueError("Weights must be a 1D vector")
+
+    return S
+
+
+# -----------------------------------------------------
 # Effective Rank
 # -----------------------------------------------------
 
@@ -102,27 +119,43 @@ def solve_least_squares(D, w):
 # Ridge solver
 # -----------------------------------------------------
 
-# def solve_ridge(D, w, lam):
-
-#     Dt = D.T
-
-#     A = Dt @ D + lam * np.eye(D.shape[0])
-
-#     b = Dt @ w
-
-#     alpha = np.linalg.solve(A, b)
-
-#     return alpha
-
 def solve_ridge(D, w, lam):
 
     Dt = D.T
 
-    A = D @ Dt + lam * np.eye(D.shape[0])   # (k,k)
-
-    b = D @ w                               # (k,)
+    A = D @ Dt + lam * np.eye(D.shape[0])
+    b = D @ w
 
     alpha = np.linalg.solve(A, b)
+
+    return alpha
+
+
+# -----------------------------------------------------
+# Weighted solver (NEW)
+# -----------------------------------------------------
+
+def solve_weighted(D, w, S, lam=None):
+
+    Dt = D.T  # (d, k)
+
+    if lam is None:
+        # Weighted least squares
+        SDt = S[:, None] * Dt
+        Sw = S * w
+
+        alpha, *_ = np.linalg.lstsq(SDt, Sw, rcond=None)
+
+    else:
+        # Correct weighted ridge: D S^2 D^T α = D S^2 w
+        S_sq = S ** 2
+
+        DS2 = D * S_sq[None, :]   # (k, d)
+
+        A = DS2 @ Dt + lam * np.eye(D.shape[0])
+        b = DS2 @ w
+
+        alpha = np.linalg.solve(A, b)
 
     return alpha
 
@@ -145,6 +178,28 @@ def compute_metrics(D, w, alpha):
 
 
 # -----------------------------------------------------
+# Weighted metric computation
+# -----------------------------------------------------
+
+def compute_weighted_metrics(D, w, alpha, S):
+
+    Dt = D.T
+
+    # Step 1: projection in weighted space
+    SDt = S[:, None] * Dt           # (d, k)
+    w_weighted_proj = SDt @ alpha   # (d,)
+
+    # Step 2: map back to original space
+    S_inv = 1.0 / (S)
+    w_final = S_inv * w_weighted_proj
+
+    # Step 3: compute error
+    rel_error = np.linalg.norm(w - w_final) / (np.linalg.norm(w) + 1e-8)
+    explained_fraction = 1 - rel_error
+
+    return rel_error, explained_fraction
+
+# -----------------------------------------------------
 # Core experiment
 # -----------------------------------------------------
 
@@ -154,15 +209,12 @@ def run_span_analysis(
     synthetic_B_folder,
     real_B_folder,
     ridge_lambda,
+    weights_path,
     logger
 
 ):
 
     logger.info(f"Loading embeddings")
-
-    logger.info(f"real_A folder: {real_A_folder}")
-    logger.info(f"synthetic_B folder: {synthetic_B_folder}")
-    logger.info(f"real_B folder: {real_B_folder}")
 
     real_A_emb, real_A_files = load_embeddings(real_A_folder)
     syn_emb, syn_files = load_embeddings(synthetic_B_folder)
@@ -172,17 +224,8 @@ def run_span_analysis(
     logger.info(f"synthetic embeddings: {syn_emb.shape}")
     logger.info(f"real_B embeddings: {real_B_emb.shape}")
 
-    if len(real_A_emb) == 0:
-        logger.info(f"Real A data folder {real_A_folder}")
-        raise ValueError(f"No embeddings found in {real_A_folder}")
-
-    if len(syn_emb) == 0:
-        logger.info(f"Syn B folder {synthetic_B_folder}")
-        raise ValueError(f"No embeddings found in {synthetic_B_folder}")
-
-    if len(real_B_emb) == 0:
-        logger.info(f"Real B folder {real_B_folder}")
-        raise ValueError(f"No embeddings found in {real_B_folder}")
+    if len(real_A_emb) == 0 or len(syn_emb) == 0 or len(real_B_emb) == 0:
+        raise ValueError("One of the embedding folders is empty")
 
     real_A_dict = {f: e for f, e in zip(real_A_files, real_A_emb)}
     syn_dict = {f: e for f, e in zip(syn_files, syn_emb)}
@@ -194,18 +237,15 @@ def run_span_analysis(
     logger.info("Training classifier")
 
     X = np.vstack([real_A_emb, real_B_emb])
-
     y = np.hstack([
         np.zeros(len(real_A_emb)),
         np.ones(len(real_B_emb))
     ])
 
     scaler = StandardScaler()
-
     X_scaled = scaler.fit_transform(X)
 
     clf = LogisticRegression(max_iter=1000)
-
     clf.fit(X_scaled, y)
 
     w = clf.coef_.flatten()
@@ -213,22 +253,26 @@ def run_span_analysis(
     logger.info(f"Classifier weight dimension: {w.shape}")
 
     # -------------------------------------------------
-    # Build difference matrix
+    # Load weights S
     # -------------------------------------------------
 
-    logger.info("Building difference matrix")
+    S = load_weights(weights_path)
+
+    if S.shape[0] != w.shape[0]:
+        raise ValueError("Weights dimension does not match embedding dimension")
+
+    logger.info(f"Weights shape: {S.shape}")
+
+    # -------------------------------------------------
+    # Build difference matrix
+    # -------------------------------------------------
 
     common_files = sorted(
         set(real_A_dict.keys()).intersection(set(syn_dict.keys()))
     )
 
     if len(common_files) == 0:
-        logger.info("No matching filenames between real and synthetic embeddings")
-        logger.info(real_A_dict.keys())
-        logger.info(syn_dict.keys())
         raise ValueError("No matching filenames between real and synthetic embeddings")
-
-    logger.info(f"Matched pairs: {len(common_files)}")
 
     A = np.vstack([real_A_dict[f] for f in common_files])
     B = np.vstack([syn_dict[f] for f in common_files])
@@ -244,31 +288,22 @@ def run_span_analysis(
     # SVD
     # -------------------------------------------------
 
-    logger.info("Computing SVD")
+    U, S_svd, Vt = np.linalg.svd(D, full_matrices=False)
 
-    U, S, Vt = np.linalg.svd(D, full_matrices=False)
+    span_rank = np.linalg.matrix_rank(D)
+    eff_rank = effective_rank(S_svd)
 
-    span_rank = np.linalg.matrix_rank(D)    
-    eff_rank = effective_rank(S)
-
-    frob_sq = np.sum(S ** 2)
-    spectral_sq = S[0] ** 2
-    stable_rank = frob_sq / spectral_sq
-    stable_rank_rounded = int(round(stable_rank))
-
-    logger.info(f"Span rank: {span_rank}")
-    logger.info(f"Effective rank: {eff_rank}")
-    logger.info(f"Stable rank: {stable_rank}")
+    frob_sq = np.sum(S_svd ** 2)
+    spectral_sq = S_svd[0] ** 2
+    stable_rank = int(round(frob_sq / spectral_sq))
 
     ranks = {
-    
         "effective_rank": eff_rank,
         "span_rank": span_rank,
-        "stable_rank": stable_rank_rounded
-
+        "stable_rank": stable_rank
     }
 
-    solvers = ["least_squares", "ridge"]
+    solvers = ["weighted_ls", "weighted_ridge"]
 
     results = []
 
@@ -280,9 +315,7 @@ def run_span_analysis(
 
         logger.info(f"Running rank method: {rank_name}, k={k}")
 
-        D_reduced = reduce_matrix(Vt, S, k)
-
-        logger.info(f'Reducing difference matrix dim: {D_reduced.shape}')
+        D_reduced = reduce_matrix(Vt, S_svd, k)
 
         for solver in solvers:
 
@@ -291,21 +324,25 @@ def run_span_analysis(
             try:
                 if solver == "least_squares":
                     alpha = solve_least_squares(D_reduced, w)
-                else:
+                    rel_error, explained_fraction = compute_metrics(D_reduced, w, alpha)
+
+                elif solver == "ridge":
                     alpha = solve_ridge(D_reduced, w, ridge_lambda)
+                    rel_error, explained_fraction = compute_metrics(D_reduced, w, alpha)
+
+                elif solver == "weighted_ls":
+                    alpha = solve_weighted(D_reduced, w, S, lam=None)
+                    rel_error, explained_fraction = compute_weighted_metrics(D_reduced, w, alpha, S)
+
+                elif solver == "weighted_ridge":
+                    alpha = solve_weighted(D_reduced, w, S, lam=ridge_lambda)
+                    rel_error, explained_fraction = compute_weighted_metrics(D_reduced, w, alpha, S)
 
             except Exception as e:
-                logging.info(f"Solver failed while computing alpha: {e}")
+                logger.error(f"Solver failed: {e}")
                 raise
 
-            rel_error, explained_fraction = compute_metrics(
-                D_reduced, w, alpha
-            )
-
-            logger.info(f"Solved using {solver}")
-
             results.append({
-
                 "rank_method": rank_name,
                 "solver": solver,
                 "k": int(k),
@@ -313,10 +350,7 @@ def run_span_analysis(
                 "explained_fraction": float(explained_fraction),
                 "num_pairs": len(common_files),
                 "embedding_dim": D.shape[1]
-
             })
-
-            logger.info(f"Appended results for {solver}")
 
     return results
 
@@ -344,7 +378,6 @@ def write_results_csv(results, output_file):
 def main():
 
     parser = argparse.ArgumentParser()
-
     parser.add_argument("--config", type=str, required=True)
 
     args = parser.parse_args()
@@ -358,12 +391,14 @@ def main():
     )
 
     logging.basicConfig(level=logging.INFO)
-
     logger = logging.getLogger("span_analysis")
 
     all_results = []
 
     for embedding_type, model_configs in config.EMBEDDINGS.items():
+
+        if embedding_type == "raw":
+            continue
 
         logger.info(f"Embedding type: {embedding_type}")
 
@@ -371,21 +406,23 @@ def main():
 
             logger.info(f"Model: {model_name}")
 
-            results = run_span_analysis(
+            weights_path = paths.get("classifier_weights", None)
 
+            if weights_path is None:
+                raise ValueError(f"Missing classifier_weights for {embedding_type}-{model_name}")
+
+            results = run_span_analysis(
                 real_A_folder=paths["real_A"],
                 synthetic_B_folder=paths["synthetic_B"],
                 real_B_folder=paths["real_B"],
                 ridge_lambda=config.ridge_lambda,
+                weights_path=weights_path,
                 logger=logger
-
             )
 
             for r in results:
-
                 r["embedding_type"] = embedding_type
                 r["model"] = model_name
-
                 all_results.append(r)
 
     csv_path = os.path.join(output_dir, "span_analysis_results.csv")
@@ -393,10 +430,6 @@ def main():
     write_results_csv(all_results, csv_path)
 
     logger.info(f"Results written to {csv_path}")
-
-    for r in all_results:
-
-        logger.info(r)
 
 
 # -----------------------------------------------------
