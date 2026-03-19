@@ -637,6 +637,7 @@ explained\_fraction = 1 - rel\_error
 $$
 
 **Interpretation:**
+
 - **explained_fraction** measures how much of the classifier decision boundary lies within the span of the difference vectors.
 - Higher values indicate better alignment between synthetic transformations and the true decision boundary.
 
@@ -645,6 +646,7 @@ $$
 ### Experiment Design
 
 We conduct experiments on two datasets:
+
 - Pneumonia Chest X-ray (CXR)
 - Skin Lesion
 
@@ -660,7 +662,7 @@ $$
 \Delta_{performance} = \text{Test Accuracy}_{real} - \text{Test Accuracy}_{synthetic}
 $$
 
-3. Extract the classifier weight vector  $w$
+3. Extract the classifier weight vector $w$
 
 4. Construct the difference matrix $D$, where each row corresponds to a pairwise difference vector.
 
@@ -687,27 +689,27 @@ $$
 
 #### 1.1 Downstream Performance
 
-| Model           | Training Data   | Train Acc | Train F1 | Test Acc | Test F1 | Δ Test Acc (Real - Synth) |
-|----------------|----------------|-----------|----------|----------|---------|----------------------------|
-| ResNet-18      | Real           | 0.9885    | 0.9881   | 0.9106   | 0.9366  | —                          |
-| ResNet-18      | Synthetic      | 0.9973    | 0.9972   | 0.5596   | 0.5751  | **0.3510**                 |
-| MobileNet-V2   | Real           | 0.9969    | 0.9968   | 0.9768   | 0.9844  | —                          |
-| MobileNet-V2   | Synthetic      | 0.8800    | 0.8901   | 0.8135   | 0.8689  | **0.1633**                 |
-| EfficientNet-B0| Real           | 0.9943    | 0.9941   | 0.9724   | 0.9814  | —                          |
-| EfficientNet-B0| Synthetic      | 0.9237    | 0.9272   | 0.8709   | 0.9101  | **0.1015**                 |
+| Model           | Training Data | Train Acc | Train F1 | Test Acc | Test F1 | Δ Test Acc (Real - Synth) |
+| --------------- | ------------- | --------- | -------- | -------- | ------- | ------------------------- |
+| ResNet-18       | Real          | 0.9885    | 0.9881   | 0.9106   | 0.9366  | —                         |
+| ResNet-18       | Synthetic     | 0.9973    | 0.9972   | 0.5596   | 0.5751  | **0.3510**                |
+| MobileNet-V2    | Real          | 0.9969    | 0.9968   | 0.9768   | 0.9844  | —                         |
+| MobileNet-V2    | Synthetic     | 0.8800    | 0.8901   | 0.8135   | 0.8689  | **0.1633**                |
+| EfficientNet-B0 | Real          | 0.9943    | 0.9941   | 0.9724   | 0.9814  | —                         |
+| EfficientNet-B0 | Synthetic     | 0.9237    | 0.9272   | 0.8709   | 0.9101  | **0.1015**                |
 
 ---
 
 #### 1.2 Diagnostic Metrics (Embedding Space Analysis)
 
-| Embedding Model | Solver         | Effective Rank | Relative Error | Explained Fraction | Number of Pairs | Dim |
-|-----------------|---------------|----------------|----------------|--------------------|--------|-----|
-| ResNet-18       | Least Squares | 182            | 0.7061         | 0.2939             | 259    | 512 |
-| ResNet-18       | Ridge         | 182            | 0.7061         | 0.2939             | 259    | 512 |
-| CLIP            | Least Squares | 145            | 0.8016         | 0.1984             | 259    | 512 |
-| CLIP            | Ridge         | 145            | 0.8016         | 0.1984             | 259    | 512 |
-| DINOv2          | Least Squares | 151            | 0.6627         | 0.3373             | 259    | 384 |
-| DINOv2          | Ridge         | 151            | 0.6627         | 0.3373             | 259    | 384 |
+| Embedding Model | Solver        | Effective Rank | Relative Error | Explained Fraction | Number of Pairs | Dim |
+| --------------- | ------------- | -------------- | -------------- | ------------------ | --------------- | --- |
+| ResNet-18       | Least Squares | 182            | 0.7061         | 0.2939             | 259             | 512 |
+| ResNet-18       | Ridge         | 182            | 0.7061         | 0.2939             | 259             | 512 |
+| CLIP            | Least Squares | 145            | 0.8016         | 0.1984             | 259             | 512 |
+| CLIP            | Ridge         | 145            | 0.8016         | 0.1984             | 259             | 512 |
+| DINOv2          | Least Squares | 151            | 0.6627         | 0.3373             | 259             | 384 |
+| DINOv2          | Ridge         | 151            | 0.6627         | 0.3373             | 259             | 384 |
 
 ---
 
@@ -723,27 +725,27 @@ $$
 
 #### 2.1 Downstream Performance
 
-| Model           | Training Data   | Train Acc | Train F1 | Test Acc | Test F1 | Δ Test Acc (Real - Synth) |
-|----------------|----------------|-----------|----------|----------|---------|----------------------------|
-| ResNet-18      | Real           | 0.9986    | 0.9986   | 0.9651   | 0.9655  | —                          |
-| ResNet-18      | Synthetic      | 0.8097    | 0.7705   | 0.9302   | 0.9231  | **0.0349**                 |
-| MobileNet-V2   | Real           | 1.0000    | 1.0000   | 0.9767   | 0.9767  | —                          |
-| MobileNet-V2   | Synthetic      | 0.9972    | 0.9972   | 0.9302   | 0.9231  | **0.0465**                 |
-| EfficientNet-B0| Real           | 0.9957    | 0.9957   | 0.7907   | 0.8125  | —                          |
-| EfficientNet-B0| Synthetic      | 0.9503    | 0.9477   | 0.7791   | 0.8000  | **0.0116**                 |
+| Model           | Training Data | Train Acc | Train F1 | Test Acc | Test F1 | Δ Test Acc (Real - Synth) |
+| --------------- | ------------- | --------- | -------- | -------- | ------- | ------------------------- |
+| ResNet-18       | Real          | 0.9986    | 0.9986   | 0.9651   | 0.9655  | —                         |
+| ResNet-18       | Synthetic     | 0.8097    | 0.7705   | 0.9302   | 0.9231  | **0.0349**                |
+| MobileNet-V2    | Real          | 1.0000    | 1.0000   | 0.9767   | 0.9767  | —                         |
+| MobileNet-V2    | Synthetic     | 0.9972    | 0.9972   | 0.9302   | 0.9231  | **0.0465**                |
+| EfficientNet-B0 | Real          | 0.9957    | 0.9957   | 0.7907   | 0.8125  | —                         |
+| EfficientNet-B0 | Synthetic     | 0.9503    | 0.9477   | 0.7791   | 0.8000  | **0.0116**                |
 
 ---
 
 #### 2.2 Diagnostic Metrics (Embedding Space Analysis)
 
-| Embedding Model | Solver         | Effective Rank | Relative Error | Explained Fraction | Number of Pairs | Dim |
-|-----------------|---------------|----------------|----------------|--------------------|--------|-----|
-| ResNet-18       | Least Squares | 203            | 0.4633         | 0.5367             | 352    | 512 |
-| ResNet-18       | Ridge         | 203            | 0.4633         | 0.5367             | 352    | 512 |
-| CLIP            | Least Squares | 200            | 0.3195         | 0.6805             | 352    | 512 |
-| CLIP            | Ridge         | 200            | 0.3195         | 0.6805             | 352    | 512 |
-| DINOv2          | Least Squares | 190            | 0.3567         | 0.6433             | 352    | 384 |
-| DINOv2          | Ridge         | 190            | 0.3567         | 0.6433             | 352    | 384 |
+| Embedding Model | Solver        | Effective Rank | Relative Error | Explained Fraction | Number of Pairs | Dim |
+| --------------- | ------------- | -------------- | -------------- | ------------------ | --------------- | --- |
+| ResNet-18       | Least Squares | 203            | 0.4633         | 0.5367             | 352             | 512 |
+| ResNet-18       | Ridge         | 203            | 0.4633         | 0.5367             | 352             | 512 |
+| CLIP            | Least Squares | 200            | 0.3195         | 0.6805             | 352             | 512 |
+| CLIP            | Ridge         | 200            | 0.3195         | 0.6805             | 352             | 512 |
+| DINOv2          | Least Squares | 190            | 0.3567         | 0.6433             | 352             | 384 |
+| DINOv2          | Ridge         | 190            | 0.3567         | 0.6433             | 352             | 384 |
 
 ---
 
@@ -762,6 +764,7 @@ $$
 Across all experiments, least squares and ridge regularization produce nearly identical results.
 
 This indicates that:
+
 - The system is well-conditioned in practice
 - The behavior of the metric is not influenced by numerical instability
 
@@ -848,4 +851,3 @@ Overall, we conclude that:
 > explained_fraction is a useful but not universally reliable diagnostic metric, and its effectiveness depends on both the dataset and the embedding space.
 
 These results highlight the need to complement geometric metrics with additional analysis when evaluating synthetic data quality.
-

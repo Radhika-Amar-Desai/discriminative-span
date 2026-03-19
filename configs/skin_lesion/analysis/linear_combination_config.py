@@ -29,19 +29,22 @@ EMBEDDINGS = {
         "resnet18": {
             "real_A": os.path.join(BASE_REAL_DATA_DIR, 'resnet18', CLASS_A),
             "synthetic_B": os.path.join(L1_SCALED_SYNTHETIC_DATA_DIR, 'resnet18', CLASS_B),
-            "real_B": os.path.join(BASE_REAL_DATA_DIR, 'resnet18', CLASS_B)
+            "real_B": os.path.join(BASE_REAL_DATA_DIR, 'resnet18', CLASS_B),
+            "classifier_weights": os.path.join(L1_SCALED_SYNTHETIC_DATA_DIR, 'resnet18', 'weights.npy')
         },
 
         "clip": {
             "real_A": os.path.join(BASE_REAL_DATA_DIR, 'clip', CLASS_A),
             "synthetic_B": os.path.join(L1_SCALED_SYNTHETIC_DATA_DIR, 'clip', CLASS_B),
-            "real_B": os.path.join(BASE_REAL_DATA_DIR, 'clip', CLASS_B)
+            "real_B": os.path.join(BASE_REAL_DATA_DIR, 'clip', CLASS_B),
+            "classifier_weights": os.path.join(L1_SCALED_SYNTHETIC_DATA_DIR, 'clip', 'weights.npy')
         },
 
         "dinov2": {
             "real_A": os.path.join(BASE_REAL_DATA_DIR, 'dinov2', CLASS_A),
             "synthetic_B": os.path.join(L1_SCALED_SYNTHETIC_DATA_DIR, 'dinov2', CLASS_B),
-            "real_B": os.path.join(BASE_REAL_DATA_DIR, 'dinov2', CLASS_B)
+            "real_B": os.path.join(BASE_REAL_DATA_DIR, 'dinov2', CLASS_B),
+            "classifier_weights": os.path.join(L1_SCALED_SYNTHETIC_DATA_DIR, 'dinov2', 'weights.npy')
         }
 
     },
@@ -50,19 +53,22 @@ EMBEDDINGS = {
         "resnet18": {
             "real_A": os.path.join(BASE_REAL_DATA_DIR, 'resnet18', CLASS_A),
             "synthetic_B": os.path.join(L2_SCALED_SYNTHETIC_DATA_DIR, 'resnet18', CLASS_B),
-            "real_B": os.path.join(BASE_REAL_DATA_DIR, 'resnet18', CLASS_B)
+            "real_B": os.path.join(BASE_REAL_DATA_DIR, 'resnet18', CLASS_B),
+            "classifier_weights": os.path.join(L2_SCALED_SYNTHETIC_DATA_DIR, 'resnet18', 'weights.npy')
         },
 
         "clip": {
             "real_A": os.path.join(BASE_REAL_DATA_DIR, 'clip', CLASS_A),
             "synthetic_B": os.path.join(L2_SCALED_SYNTHETIC_DATA_DIR, 'clip', CLASS_B),
-            "real_B": os.path.join(BASE_REAL_DATA_DIR, 'clip', CLASS_B)
+            "real_B": os.path.join(BASE_REAL_DATA_DIR, 'clip', CLASS_B),
+            "classifier_weights": os.path.join(L2_SCALED_SYNTHETIC_DATA_DIR, 'clip', 'weights.npy')
         },
 
         "dinov2": {
             "real_A": os.path.join(BASE_REAL_DATA_DIR, 'dinov2', CLASS_A),
             "synthetic_B": os.path.join(L2_SCALED_SYNTHETIC_DATA_DIR, 'dinov2', CLASS_B),
-            "real_B": os.path.join(BASE_REAL_DATA_DIR, 'dinov2', CLASS_B)
+            "real_B": os.path.join(BASE_REAL_DATA_DIR, 'dinov2', CLASS_B),
+            "classifier_weights": os.path.join(L2_SCALED_SYNTHETIC_DATA_DIR, 'dinov2', 'weights.npy')
         }
     },
 
@@ -70,19 +76,22 @@ EMBEDDINGS = {
         "resnet18": {
             "real_A": os.path.join(BASE_REAL_DATA_DIR, 'resnet18', CLASS_A),
             "synthetic_B": os.path.join(SCALED_SYNTHETIC_DATA_DIR, 'resnet18', CLASS_B),
-            "real_B": os.path.join(BASE_REAL_DATA_DIR, 'resnet18', CLASS_B)
+            "real_B": os.path.join(BASE_REAL_DATA_DIR, 'resnet18', CLASS_B),
+            "classifier_weights": os.path.join(SCALED_SYNTHETIC_DATA_DIR, 'resnet18', 'weights.npy')
         },
 
         "clip": {
             "real_A": os.path.join(BASE_REAL_DATA_DIR, 'clip', CLASS_A),
             "synthetic_B": os.path.join(SCALED_SYNTHETIC_DATA_DIR, 'clip', CLASS_B),
-            "real_B": os.path.join(BASE_REAL_DATA_DIR, 'clip', CLASS_B)
+            "real_B": os.path.join(BASE_REAL_DATA_DIR, 'clip', CLASS_B),
+            "classifier_weights": os.path.join(SCALED_SYNTHETIC_DATA_DIR, 'clip', 'weights.npy')
         },
 
         "dinov2": {
             "real_A": os.path.join(BASE_REAL_DATA_DIR, 'dinov2', CLASS_A),
             "synthetic_B": os.path.join(SCALED_SYNTHETIC_DATA_DIR, 'dinov2', CLASS_B),
-            "real_B": os.path.join(BASE_REAL_DATA_DIR, 'dinov2', CLASS_B)
+            "real_B": os.path.join(BASE_REAL_DATA_DIR, 'dinov2', CLASS_B),
+            "classifier_weights": os.path.join(SCALED_SYNTHETIC_DATA_DIR, 'dinov2', 'weights.npy')
         }
     },
 
