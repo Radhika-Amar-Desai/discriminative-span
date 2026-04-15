@@ -91,6 +91,30 @@ def load_resnet18():
     return model.to(device)
 
 
+def load_efficientnetb0():
+    model = models.efficientnet_b0(
+        weights=models.EfficientNet_B0_Weights.IMAGENET1K_V1
+    )
+
+    # Remove classifier → get embeddings
+    model.classifier = torch.nn.Identity()
+
+    model.eval()
+    return model.to(device)
+
+
+def load_mobilenetv2():
+    model = models.mobilenet_v2(
+        weights=models.MobileNet_V2_Weights.IMAGENET1K_V1
+    )
+
+    # Remove classifier → get embeddings
+    model.classifier = torch.nn.Identity()
+
+    model.eval()
+    return model.to(device)
+
+
 def load_clip():
 
     model, preprocess = clip.load("ViT-B/32", device=device)
@@ -398,7 +422,43 @@ def main():
         logger
     )
 
+    # ------------------------------------------------
+    # EfficientNet-B0
+    # ------------------------------------------------
+
+    logger.info("Loading EfficientNet-B0")
+
+    efficientnet = load_efficientnetb0()
+
+    extract_and_save_embeddings(
+        efficientnet,
+        loader,
+        dataset,
+        output_dir,
+        "efficientnetb0",
+        logger
+    )
+
+    # ------------------------------------------------
+    # MobileNetV2
+    # ------------------------------------------------
+
+    logger.info("Loading MobileNetV2")
+
+    mobilenet = load_mobilenetv2()
+
+    extract_and_save_embeddings(
+        mobilenet,
+        loader,
+        dataset,
+        output_dir,
+        "mobilenetv2",
+        logger
+    )
+
+
     logger.info("All embeddings generated successfully")
+
 
 
 if __name__ == "__main__":
