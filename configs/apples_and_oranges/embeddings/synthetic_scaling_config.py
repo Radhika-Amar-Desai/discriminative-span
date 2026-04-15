@@ -3,9 +3,9 @@ import os
 DATASET_NAME = "skin_lesion"
 
 
-BASE_DIR = r"C:\Users\97433\Knowing_the_difference\data\embeddings\skin_lesion"
+BASE_DIR = r"C:\Users\97433\Knowing_the_difference\data\embeddings\apples_and_oranges"
 
-SYNTHETIC_DATA_DIR = os.path.join(BASE_DIR, "synthetic_data")
+SYNTHETIC_DATA_DIR = os.path.join(BASE_DIR, "synthetic_corrupted_data")
 
 DINOV2_EMBEDDING_FOLDER = os.path.join(SYNTHETIC_DATA_DIR, "raw", r"dinov2")
 RESNET18_EMBEDDING_FOLDER = os.path.join(SYNTHETIC_DATA_DIR, "raw", r"resnet18")

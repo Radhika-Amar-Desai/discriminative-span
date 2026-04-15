@@ -3,7 +3,7 @@ import os
 DATASET_NAME = "skin_lesion"
 
 
-BASE_DIR = r"C:\Users\97433\Knowing_the_difference\data\embeddings\skin_lesion"
+BASE_DIR = r"C:\Users\97433\Knowing_the_difference\data\embeddings\watermark_dataset"
 
 SYNTHETIC_DATA_DIR = os.path.join(BASE_DIR, "synthetic_data")
 

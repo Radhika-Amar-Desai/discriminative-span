@@ -21,83 +21,95 @@ RAW_SYNTHETIC_DATA_DIR = os.path.join(BASE_SYNTHETIC_DATA_DIR, 'raw')
 
 EMBEDDINGS = {
 
-    "l1": {
+    # "l1": {
 
-        "resnet18": {
-            "real_A": os.path.join(RAW_REAL_DATA_DIR, 'resnet18', 'NORMAL'),
-            "synthetic_B": os.path.join(L1_SCALED_SYNTHETIC_DATA_DIR, 'resnet18', 'PNEUMONIA'),
-            "real_B": os.path.join(RAW_REAL_DATA_DIR, 'resnet18', 'PNEUMONIA')
-        },
+    #     "resnet18": {
+    #         "real_A": os.path.join(RAW_REAL_DATA_DIR, 'resnet18', 'NORMAL'),
+    #         "synthetic_A": os.path.join(L1_SCALED_SYNTHETIC_DATA_DIR, 'resnet18', 'NORMAL'),
+    #         "synthetic_B": os.path.join(L1_SCALED_SYNTHETIC_DATA_DIR, 'resnet18', 'PNEUMONIA'),
+    #         "real_B": os.path.join(RAW_REAL_DATA_DIR, 'resnet18', 'PNEUMONIA')
+    #     },
 
-        "clip": {
-            "real_A": os.path.join(RAW_REAL_DATA_DIR, 'clip', 'NORMAL'),
-            "synthetic_B": os.path.join(L1_SCALED_SYNTHETIC_DATA_DIR, 'clip', 'PNEUMONIA'),
-            "real_B": os.path.join(RAW_REAL_DATA_DIR, 'clip', 'PNEUMONIA')
-        },
+    #     "clip": {
+    #         "real_A": os.path.join(RAW_REAL_DATA_DIR, 'clip', 'NORMAL'),
+    #         "synthetic_A": os.path.join(L1_SCALED_SYNTHETIC_DATA_DIR, 'clip', 'NORMAL'),
+    #         "synthetic_B": os.path.join(L1_SCALED_SYNTHETIC_DATA_DIR, 'clip', 'PNEUMONIA'),
+    #         "real_B": os.path.join(RAW_REAL_DATA_DIR, 'clip', 'PNEUMONIA')
+    #     },
 
-        "dinov2": {
-            "real_A": os.path.join(RAW_REAL_DATA_DIR, 'dinov2', 'NORMAL'),
-            "synthetic_B": os.path.join(L1_SCALED_SYNTHETIC_DATA_DIR, 'dinov2', 'PNEUMONIA'),
-            "real_B": os.path.join(RAW_REAL_DATA_DIR, 'dinov2', 'PNEUMONIA')
-        }
+    #     "dinov2": {
+    #         "real_A": os.path.join(RAW_REAL_DATA_DIR, 'dinov2', 'NORMAL'),
+    #         "synthetic_A": os.path.join(L1_SCALED_SYNTHETIC_DATA_DIR, 'dinov2', 'NORMAL'),
+    #         "synthetic_B": os.path.join(L1_SCALED_SYNTHETIC_DATA_DIR, 'dinov2', 'PNEUMONIA'),
+    #         "real_B": os.path.join(RAW_REAL_DATA_DIR, 'dinov2', 'PNEUMONIA')
+    #     }
 
-    },
+    # },
 
-    "l2": {
-        "resnet18": {
-            "real_A": os.path.join(RAW_REAL_DATA_DIR, 'resnet18', 'NORMAL'),
-            "synthetic_B": os.path.join(L2_SCALED_SYNTHETIC_DATA_DIR, 'resnet18', 'PNEUMONIA'),
-            "real_B": os.path.join(RAW_REAL_DATA_DIR, 'resnet18', 'PNEUMONIA')
-        },
+    # "l2": {
+    #     "resnet18": {
+    #         "real_A": os.path.join(RAW_REAL_DATA_DIR, 'resnet18', 'NORMAL'),
+    #         "synthetic_A": os.path.join(L2_SCALED_SYNTHETIC_DATA_DIR, 'resnet18', 'NORMAL'),
+    #         "synthetic_B": os.path.join(L2_SCALED_SYNTHETIC_DATA_DIR, 'resnet18', 'PNEUMONIA'),
+    #         "real_B": os.path.join(RAW_REAL_DATA_DIR, 'resnet18', 'PNEUMONIA')
+    #     },
 
-        "clip": {
-            "real_A": os.path.join(RAW_REAL_DATA_DIR, 'clip', 'NORMAL'),
-            "synthetic_B": os.path.join(L2_SCALED_SYNTHETIC_DATA_DIR, 'clip', 'PNEUMONIA'),
-            "real_B": os.path.join(RAW_REAL_DATA_DIR, 'clip', 'PNEUMONIA')
-        },
+    #     "clip": {
+    #         "real_A": os.path.join(RAW_REAL_DATA_DIR, 'clip', 'NORMAL'),
+    #         "synthetic_A": os.path.join(L2_SCALED_SYNTHETIC_DATA_DIR, 'clip', 'NORMAL'),
+    #         "synthetic_B": os.path.join(L2_SCALED_SYNTHETIC_DATA_DIR, 'clip', 'PNEUMONIA'),
+    #         "real_B": os.path.join(RAW_REAL_DATA_DIR, 'clip', 'PNEUMONIA')
+    #     },
 
-        "dinov2": {
-            "real_A": os.path.join(RAW_REAL_DATA_DIR, 'dinov2', 'NORMAL'),
-            "synthetic_B": os.path.join(L2_SCALED_SYNTHETIC_DATA_DIR, 'dinov2', 'PNEUMONIA'),
-            "real_B": os.path.join(RAW_REAL_DATA_DIR, 'dinov2', 'PNEUMONIA')
-        }
-    },
+    #     "dinov2": {
+    #         "real_A": os.path.join(RAW_REAL_DATA_DIR, 'dinov2', 'NORMAL'),
+    #         "synthetic_A": os.path.join(L2_SCALED_SYNTHETIC_DATA_DIR, 'dinov2', 'NORMAL'),
+    #         "synthetic_B": os.path.join(L2_SCALED_SYNTHETIC_DATA_DIR, 'dinov2', 'PNEUMONIA'),
+    #         "real_B": os.path.join(RAW_REAL_DATA_DIR, 'dinov2', 'PNEUMONIA')
+    #     }
+    # },
 
-    "scaled": {
-        "resnet18": {
-            "real_A": os.path.join(RAW_REAL_DATA_DIR, 'resnet18', 'NORMAL'),
-            "synthetic_B": os.path.join(SCALED_SYNTHETIC_DATA_DIR, 'resnet18', 'PNEUMONIA'),
-            "real_B": os.path.join(RAW_REAL_DATA_DIR, 'resnet18', 'PNEUMONIA')
-        },
+    # "scaled": {
+    #     "resnet18": {
+    #         "real_A": os.path.join(RAW_REAL_DATA_DIR, 'resnet18', 'NORMAL'),
+    #         "synthetic_A": os.path.join(SCALED_SYNTHETIC_DATA_DIR, 'resnet18', 'NORMAL'),
+    #         "synthetic_B": os.path.join(SCALED_SYNTHETIC_DATA_DIR, 'resnet18', 'PNEUMONIA'),
+    #         "real_B": os.path.join(RAW_REAL_DATA_DIR, 'resnet18', 'PNEUMONIA')
+    #     },
 
-        "clip": {
-            "real_A": os.path.join(RAW_REAL_DATA_DIR, 'clip', 'NORMAL'),
-            "synthetic_B": os.path.join(SCALED_SYNTHETIC_DATA_DIR, 'clip', 'PNEUMONIA'),
-            "real_B": os.path.join(RAW_REAL_DATA_DIR, 'clip', 'PNEUMONIA')
-        },
+    #     "clip": {
+    #         "real_A": os.path.join(RAW_REAL_DATA_DIR, 'clip', 'NORMAL'),
+    #         "synthetic_A": os.path.join(SCALED_SYNTHETIC_DATA_DIR, 'clip', 'NORMAL'),
+    #         "synthetic_B": os.path.join(SCALED_SYNTHETIC_DATA_DIR, 'clip', 'PNEUMONIA'),
+    #         "real_B": os.path.join(RAW_REAL_DATA_DIR, 'clip', 'PNEUMONIA')
+    #     },
 
-        "dinov2": {
-            "real_A": os.path.join(RAW_REAL_DATA_DIR, 'dinov2', 'NORMAL'),
-            "synthetic_B": os.path.join(SCALED_SYNTHETIC_DATA_DIR, 'dinov2', 'PNEUMONIA'),
-            "real_B": os.path.join(RAW_REAL_DATA_DIR, 'dinov2', 'PNEUMONIA')
-        }
-    },
+    #     "dinov2": {
+    #         "real_A": os.path.join(RAW_REAL_DATA_DIR, 'dinov2', 'NORMAL'),
+    #         "synthetic_A": os.path.join(SCALED_SYNTHETIC_DATA_DIR, 'dinov2', 'NORMAL'),
+    #         "synthetic_B": os.path.join(SCALED_SYNTHETIC_DATA_DIR, 'dinov2', 'PNEUMONIA'),
+    #         "real_B": os.path.join(RAW_REAL_DATA_DIR, 'dinov2', 'PNEUMONIA')
+    #     }
+    # },
 
     "raw": {
         "resnet18": {
             "real_A": os.path.join(RAW_REAL_DATA_DIR, 'resnet18', 'NORMAL'),
+            "synthetic_A": os.path.join(RAW_SYNTHETIC_DATA_DIR, 'resnet18', 'NORMAL'),
             "synthetic_B": os.path.join(RAW_SYNTHETIC_DATA_DIR, 'resnet18', 'PNEUMONIA'),
             "real_B": os.path.join(RAW_REAL_DATA_DIR, 'resnet18', 'PNEUMONIA')
         },
 
         "clip": {
             "real_A": os.path.join(RAW_REAL_DATA_DIR, 'clip', 'NORMAL'),
+            "synthetic_A": os.path.join(RAW_SYNTHETIC_DATA_DIR, 'clip', 'NORMAL'),
             "synthetic_B": os.path.join(RAW_SYNTHETIC_DATA_DIR, 'clip', 'PNEUMONIA'),
             "real_B": os.path.join(RAW_REAL_DATA_DIR, 'clip', 'PNEUMONIA')
         },
 
         "dinov2": {
             "real_A": os.path.join(RAW_REAL_DATA_DIR, 'dinov2', 'NORMAL'),
+            "synthetic_A": os.path.join(RAW_SYNTHETIC_DATA_DIR, 'dinov2', 'NORMAL'),
             "synthetic_B": os.path.join(RAW_SYNTHETIC_DATA_DIR, 'dinov2', 'PNEUMONIA'),
             "real_B": os.path.join(RAW_REAL_DATA_DIR, 'dinov2', 'PNEUMONIA')
         }
