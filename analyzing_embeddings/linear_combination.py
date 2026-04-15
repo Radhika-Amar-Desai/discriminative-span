@@ -15,6 +15,7 @@ import numpy as np
 
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
+from scipy.optimize import nnls
 
 from utils.auto_logger import log_run
 
@@ -36,22 +37,50 @@ def load_config(path):
 # Load embeddings
 # -----------------------------------------------------
 
+# def load_embeddings(folder):
+
+#     if not os.path.exists(folder):
+#         raise ValueError(f"Folder does not exist: {folder}")
+
+#     embeddings = []
+#     paths = []
+
+#     files = [
+#         f for f in os.listdir(folder)
+#         if f.endswith(".npy")
+#     ]
+
+#     for file in files:
+
+#         path = os.path.join(folder, file)
+
+#         emb = np.load(path)
+
+#         embeddings.append(emb)
+#         paths.append(file)
+
+#     embeddings = np.array(embeddings)
+
+#     return embeddings, paths
+
 def load_embeddings(folder):
+
+    print(f"[DEBUG] Checking folder: {folder}")
 
     if not os.path.exists(folder):
         raise ValueError(f"Folder does not exist: {folder}")
 
+    files = [f for f in os.listdir(folder) if f.endswith(".npy")]
+
+    print(f"[DEBUG] Found {len(files)} .npy files in {folder}")
+
     embeddings = []
     paths = []
 
-    files = [
-        f for f in os.listdir(folder)
-        if f.endswith(".npy")
-    ]
-
     for file in files:
-
         path = os.path.join(folder, file)
+
+        print(f"[DEBUG] Loading: {path}")
 
         emb = np.load(path)
 
@@ -59,6 +88,8 @@ def load_embeddings(folder):
         paths.append(file)
 
     embeddings = np.array(embeddings)
+
+    print(f"[DEBUG] Final embeddings shape: {embeddings.shape}")
 
     return embeddings, paths
 
@@ -79,13 +110,11 @@ def effective_rank(singular_values):
 # Reduce matrix using SVD
 # -----------------------------------------------------
 
-# def reduce_matrix(Vt, S, k):
-
-#     return (S[:k, None] * Vt[:k])
-
-
 def reduce_matrix(U, S_svd, Vt, k):
     return (U[:, :k] * S_svd[:k]) @ Vt[:k]
+
+# def reduce_matrix(U, S_svd, Vt, k):
+#     return (S_svd[:k, None] * Vt[:k])
 
 # -----------------------------------------------------
 # Least squares solver
@@ -117,6 +146,18 @@ def solve_ridge(D, w, lam):
 
 
 # -----------------------------------------------------
+# NNLS solver
+# -----------------------------------------------------
+
+def solve_nnls(D, w):
+
+    Dt = D.T
+    alpha, _ = nnls(Dt, w)
+
+    return alpha
+
+
+# -----------------------------------------------------
 # Metric computation
 # -----------------------------------------------------
 
@@ -130,7 +171,13 @@ def compute_metrics(D, w, alpha):
 
     explained_fraction = 1 - rel_error
 
-    return rel_error, explained_fraction
+    # -------------------------------
+    # NEW: alpha statistics
+    # -------------------------------
+    alpha_mean = float(np.mean(alpha))
+    alpha_std = float(np.sqrt(np.var(alpha)))
+
+    return rel_error, explained_fraction, alpha_mean, alpha_std
 
 
 # -----------------------------------------------------
@@ -138,20 +185,37 @@ def compute_metrics(D, w, alpha):
 # -----------------------------------------------------
 
 def run_span_analysis(
-
     real_A_folder,
     synthetic_B_folder,
     real_B_folder,
     ridge_lambda,
-    logger
-
+    logger,
+    synthetic_A_folder=None   # NEW
 ):
 
     logger.info(f"Loading embeddings")
 
+
+    logger.info(f"real_A folder: {real_A_folder}")
+    logger.info(f"real_A folder: {synthetic_A_folder}")
+    logger.info(f"synthetic_B folder: {synthetic_B_folder}")
+    logger.info(f"real_B folder: {real_B_folder}")
+
+    if synthetic_A_folder is not None:
+        logger.info(f"synthetic_A folder: {synthetic_A_folder}")
+        synA_emb, synA_files = load_embeddings(synthetic_A_folder)
+
+        logger.info(f"synthetic_A embeddings: {synA_emb.shape}")
+
+        if len(synA_emb) == 0:
+            raise ValueError("Synthetic A folder is empty")
+
+        synA_dict = {f: e for f, e in zip(synA_files, synA_emb)}
+
     real_A_emb, real_A_files = load_embeddings(real_A_folder)
     syn_emb, syn_files = load_embeddings(synthetic_B_folder)
     real_B_emb, _ = load_embeddings(real_B_folder)
+
 
     logger.info(f"real_A embeddings: {real_A_emb.shape}")
     logger.info(f"synthetic embeddings: {syn_emb.shape}")
@@ -178,7 +242,7 @@ def run_span_analysis(
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
 
-    clf = LogisticRegression(max_iter=1000)
+    clf = LogisticRegression(max_iter=1000, class_weight='balanced')
     clf.fit(X_scaled, y)
 
     w = clf.coef_.flatten()
@@ -189,22 +253,61 @@ def run_span_analysis(
     # Build difference matrix
     # -------------------------------------------------
 
-    common_files = sorted(
-        set(real_A_dict.keys()).intersection(set(syn_dict.keys()))
-    )
+    # common_files = sorted(
+    #     set(real_A_dict.keys()).intersection(set(syn_dict.keys()))
+    # )
 
-    if len(common_files) == 0:
-        raise ValueError("No matching filenames between real and synthetic embeddings")
+    # if len(common_files) == 0:
+    #     raise ValueError("No matching filenames between real and synthetic embeddings")
 
-    A = np.vstack([real_A_dict[f] for f in common_files])
-    B = np.vstack([syn_dict[f] for f in common_files])
+    # A = np.vstack([real_A_dict[f] for f in common_files])
+    # B = np.vstack([syn_dict[f] for f in common_files])
 
+    # A_scaled = scaler.transform(A)
+    # B_scaled = scaler.transform(B)
+
+    # D = B_scaled - A_scaled
+
+    # logger.info(f"Difference matrix shape: {D.shape}")
+
+    # -------------------------------------------------
+# Build difference matrix (supports both modes)
+# -------------------------------------------------
+
+    if synthetic_A_folder is not None:
+        logger.info("Using synthetic_A for difference computation")
+
+        common_files = sorted(
+            set(syn_dict.keys()).intersection(set(synA_dict.keys()))
+        )
+
+        if len(common_files) == 0:
+            raise ValueError("No matching filenames between real_A and synthetic_A")
+
+        A = np.vstack([synA_dict[f] for f in common_files])
+        B = np.vstack([syn_dict[f] for f in common_files])
+
+    else:
+        logger.info("Using synthetic_B for difference computation")
+
+        common_files = sorted(
+            set(real_A_dict.keys()).intersection(set(syn_dict.keys()))
+        )
+
+        if len(common_files) == 0:
+            raise ValueError("No matching filenames between real_A and synthetic_B")
+
+        A = np.vstack([real_A_dict[f] for f in common_files])
+        B = np.vstack([syn_dict[f] for f in common_files])
+
+    # scaling stays same
     A_scaled = scaler.transform(A)
     B_scaled = scaler.transform(B)
 
     D = B_scaled - A_scaled
 
     logger.info(f"Difference matrix shape: {D.shape}")
+    logger.info(f"Number of paired samples: {len(common_files)}")
 
     # -------------------------------------------------
     # SVD
@@ -225,7 +328,7 @@ def run_span_analysis(
         "stable_rank": stable_rank
     }
 
-    solvers = ["least_squares", "ridge"]
+    solvers = ["least_squares", "ridge", "nnls"]
 
     results = []
 
@@ -246,11 +349,16 @@ def run_span_analysis(
             try:
                 if solver == "least_squares":
                     alpha = solve_least_squares(D_reduced, w)
-                    rel_error, explained_fraction = compute_metrics(D_reduced, w, alpha)
+                    rel_error, explained_fraction, alpha_mean, alpha_var = compute_metrics(D_reduced, w, alpha)
 
                 elif solver == "ridge":
                     alpha = solve_ridge(D_reduced, w, ridge_lambda)
-                    rel_error, explained_fraction = compute_metrics(D_reduced, w, alpha)
+                    rel_error, explained_fraction, alpha_mean, alpha_var = compute_metrics(D_reduced, w, alpha)
+
+                elif solver == "nnls":
+                    alpha = solve_nnls(D_reduced, w)
+                    rel_error, explained_fraction, alpha_mean, alpha_var = compute_metrics(D_reduced, w, alpha)
+
 
             except Exception as e:
                 logger.error(f"Solver failed: {e}")
@@ -260,6 +368,8 @@ def run_span_analysis(
                 "rank_method": rank_name,
                 "solver": solver,
                 "k": int(k),
+                "alpha_mean": alpha_mean,
+                "alpha_std": alpha_var,
                 "relative_error": float(rel_error),
                 "explained_fraction": float(explained_fraction),
                 "num_pairs": len(common_files),
@@ -318,6 +428,11 @@ def main():
 
         for model_name, paths in model_configs.items():
 
+            if "synthetic_A" in paths.keys():
+                synthetic_A_folder = paths["synthetic_A"]
+            else:
+                synthetic_A_folder = None
+
             logger.info(f"Model: {model_name}")
 
             results = run_span_analysis(
@@ -325,7 +440,8 @@ def main():
                 synthetic_B_folder=paths["synthetic_B"],
                 real_B_folder=paths["real_B"],
                 ridge_lambda=config.ridge_lambda,
-                logger=logger
+                logger=logger,
+                synthetic_A_folder=synthetic_A_folder
             )
 
             for r in results:
@@ -338,6 +454,25 @@ def main():
     write_results_csv(all_results, csv_path)
 
     logger.info(f"Results written to {csv_path}")
+
+    print(f"\n{'='*60}")
+    print(f"RESULTS: {csv_path}")
+    print(f"{'='*60}")
+ 
+    with open(csv_path, "r") as f:
+        reader = csv.DictReader(f)
+        rows = list(reader)
+ 
+    if rows:
+        headers = list(rows[0].keys())
+        col_width = 20
+        header_line = "  ".join(h.ljust(col_width) for h in headers)
+        print(header_line)
+        print("-" * len(header_line))
+        for row in rows:
+            print("  ".join(row[h].ljust(col_width) for h in headers))
+ 
+    print(f"{'='*60}\n")
 
 
 # -----------------------------------------------------
