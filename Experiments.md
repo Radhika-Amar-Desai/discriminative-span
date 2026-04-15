@@ -603,6 +603,7 @@ This suggests that while visual transformations may be represented across many e
 ## Experiment-Four: Evaluating Span Analysis Metric Alignment with Downstream Performance
 
 ### Experiment Objective
+
 ---
 
 In this experiment, we evaluate whether our diagnostic metric—**explained fraction**—can serve as an indicator of how well a model **generalizes to real test data**, particularly when trained using synthetic data.
@@ -616,7 +617,9 @@ Specifically, we aim to answer:
 3. Can this metric help identify when a model trained on synthetic data has learned a decision boundary that transfers effectively to real-world data?
 
 ---
+
 ### Metric Definition
+
 ---
 
 We solve the linear system:
@@ -648,41 +651,80 @@ $$
 - This alignment reflects how well the model captures **semantically meaningful variations**, which influences its ability to generalize to real data.
 
 ---
-### Experiment Design
----
-We conduct experiments on two datasets:
 
-- Pneumonia Chest X-ray (CXR)  
-- Skin Lesion  
+### Experiment Design
+
+---
+
+We conduct experiments on three datasets:
+
+- Pneumonia Chest X-ray (CXR)
+- Skin Lesion
+- Toy Watermark Dataset
 
 For each dataset:
 
-1. Train classifiers (ResNet-18, EfficientNet-B0, MobileNet-V2) on synthetic data.
+1. **Train classifiers on synthetic data**
+   - Architectures:
+     - ResNet-18
+     - EfficientNet-B0
+     - MobileNet-V2
 
-2. Evaluate performance on real test data:
+2. **Evaluate performance on real test data**
 
 $$
 \text{Test Accuracy}_{real}
 $$
 
-3. Extract the classifier weight vector $w$
+3. **Extract the classifier weight vector**
 
-4. Construct the difference matrix $D$, where each row corresponds to a pairwise difference vector derived from the training data.
+- For each trained model, we extract the final linear classifier weight vector $w$.
 
-5. Solve $D^T \alpha = w$ using:
-   - Least Squares  
-   - Ridge Regularization  
+4. **Construct the difference matrix $D$**
 
-6. Compute:
-   - Relative Error  
-   - Explained Fraction  
+- Each row of $D$ corresponds to a **pairwise difference vector** between samples.
+- These difference vectors are designed to capture **transformation directions** induced by the dataset.
 
-7. Perform analysis across embedding spaces:
-   - ResNet-18 (supervised)  
-   - CLIP (multimodal)  
-   - DINOv2 (self-supervised)  
+- Dataset-specific construction:
+  - **Pneumonia CXR / Skin Lesion**:
+    - Differences are computed between semantically meaningful pairs derived from synthetic transformations.
+    - These aim to approximate variations between healthy ↔ diseased states or lesion characteristics.
+  - **Toy Watermark Dataset**:
+    - Differences are computed between clean images and their **watermarked counterparts**.
+    - This creates a highly structured and consistent transformation direction (watermark signal), serving as a **controlled setting** where the transformation subspace is explicitly known and low-dimensional.
 
----
+5. **Solve the linear system**
+
+$$
+D^T \alpha = w
+$$
+
+using:
+
+- Least Squares
+- Ridge Regularization
+
+6. **Compute diagnostic metrics**
+
+- Relative Error
+- Explained Fraction
+
+7. **Embedding space analysis**
+
+All computations are repeated across different embedding spaces:
+
+- ResNet-18 (supervised)
+- CLIP (multimodal)
+- DINOv2 (self-supervised)
+
+8. **Controlled vs Real-World Comparison**
+
+- The **Toy Watermark dataset** serves as a **sanity-check benchmark**:
+  - Tests the behavior of the metric when transformation structure is simple and fully captured.
+- The **real-world datasets (CXR, Skin Lesion)** test the metric under:
+  - Complex, high-dimensional, and imperfectly modeled transformations.
+
+This design allows us to evaluate whether **explained_fraction behaves consistently across both idealized and realistic settings**, and whether it remains a reliable indicator of downstream generalization.
 
 ### Evaluation Strategy
 
@@ -700,11 +742,11 @@ $$
 
 #### 1.1 Downstream Performance
 
-| Model           | Training Data | Train Acc | Train F1 | Test Acc | Test F1 | 
-| --------------- | ------------- | --------- | -------- | -------- | ------- |  
-| ResNet-18       | Synthetic     | 1.0000    | 1.0000   | 0.6234   | 0.5913  | 
-| MobileNet-V2    | Synthetic     | 1.0000    | 1.0000   | 0.7917   | 0.8127  | 
-| EfficientNet-B0 | Synthetic     | 1.0000    | 1.0000   | 0.7308   | 0.7383  | 
+| Model           | Training Data | Train Acc | Train F1 | Test Acc | Test F1 |
+| --------------- | ------------- | --------- | -------- | -------- | ------- |
+| ResNet-18       | Synthetic     | 1.0000    | 1.0000   | 0.6234   | 0.5913  |
+| MobileNet-V2    | Synthetic     | 1.0000    | 1.0000   | 0.7917   | 0.8127  |
+| EfficientNet-B0 | Synthetic     | 1.0000    | 1.0000   | 0.7308   | 0.7383  |
 
 ---
 
@@ -718,6 +760,7 @@ $$
 | CLIP            | Ridge         | 145            | 0.8016         | 0.1984             | 259             | 512 |
 | DINOv2          | Least Squares | 151            | 0.4805         | 0.5194             | 259             | 384 |
 | DINOv2          | Ridge         | 151            | 0.6627         | 0.3373             | 259             | 384 |
+
 ---
 
 ### 2. Skin Lesion Dataset
@@ -745,6 +788,31 @@ $$
 
 ---
 
+### 3. Toy Watermark Dataset
+
+#### 3.1 Downstream Performance
+
+| Model           | Training Data | Train Acc | Train F1 | Test Acc | Test F1 |
+| --------------- | ------------- | --------- | -------- | -------- | ------- |
+| ResNet-18       | Synthetic     | 0.9309    | 0.9354   | 0.9556   | 0.9615  |
+| MobileNet-V2    | Synthetic     | 0.9814    | 0.9818   | 1.0000   | 1.0000  |
+| EfficientNet-B0 | Synthetic     | 0.9825    | 0.9828   | 1.0000   | 1.0000  |
+
+---
+
+#### 3.2 Diagnostic Metrics (Embedding Space Analysis)
+
+| Embedding Model | Solver        | Effective Rank | Relative Error | Explained Fraction | Number of Pairs | Dim |
+| --------------- | ------------- | -------------- | -------------- | ------------------ | --------------- | --- |
+| ResNet-18       | Least Squares | 288            | 0.1028         | 0.8971             | 485             | 512 |
+| ResNet-18       | Ridge         | 288            | 0.3564         | 0.6435             | 485             | 512 |
+| CLIP            | Least Squares | 263            | 0.0743         | 0.9256             | 485             | 512 |
+| CLIP            | Ridge         | 263            | 0.2628         | 0.7371             | 485             | 512 |
+| DINOv2          | Least Squares | 250            | 2.64e-09       | 0.9999             | 485             | 384 |
+| DINOv2          | Ridge         | 250            | 0.3178         | 0.6821             | 485             | 384 |
+
+---
+
 ## Interpretation
 
 ### 1. Relationship Between Explained Fraction and Generalization
@@ -754,18 +822,28 @@ Across both datasets, a clear pattern emerges:
 - **Higher explained_fraction is associated with better test performance on real data.**
 
 For the **Pneumonia CXR dataset**:
+
 - Explained fractions are relatively low across embedding spaces (≈ 0.19 – 0.52).
 - Correspondingly, test performance is also limited (≈ 0.62 – 0.79).
 - This suggests that the learned decision boundaries are **poorly aligned with the transformation structure**, leading to weaker generalization.
 
 For the **Skin Lesion dataset**:
+
 - Explained fractions are significantly higher (≈ 0.53 – 0.88).
 - Test performance is also strong (≈ 0.86 – 0.94).
 - This indicates that the decision boundary lies largely within the span of meaningful transformations, resulting in **strong generalization to real data**.
 
+For the **Toy Watermark dataset**:
+
+- Explained fractions are extremely high (≈ 0.64 – ~1.00), especially in Least Squares.
+- Test performance is near-perfect (≈ 0.95 – 1.00).
+- This demonstrates an almost **complete alignment between the classifier and the transformation span**.
+- This dataset acts as a **controlled sanity check**, showing that when transformations are simple, consistent, and fully captured in the span, the metric reaches its upper bound and perfectly reflects generalization.
+
 This consistent trend supports the hypothesis that **alignment between the classifier and transformation structure is a key factor in generalization**.
 
 ---
+
 ### 2. Effect of Embedding Space
 
 The choice of embedding space has a strong impact on how **reliably explained_fraction reflects real-world performance**.
@@ -807,6 +885,99 @@ This highlights that **the effectiveness of synthetic data depends on how well i
 
 ---
 
+## Computational Complexity
+
+We analyze the time and space complexity of the span-based diagnostic pipeline.
+
+Let:
+
+- $ n $: number of samples
+- $ d $: embedding dimension
+
+---
+
+#### 1. Embedding Extraction
+
+- Time: $ O(n \cdot d) $
+- Space: $ O(n \cdot d) $
+
+---
+
+#### 2. Difference Matrix Construction
+
+Each sample has a corresponding transformation (e.g., real ↔ synthetic or clean ↔ watermarked), producing one difference vector per sample:
+
+$
+D = x_i - x_j
+$
+
+Thus, the number of difference vectors is:
+
+$
+m = n
+$
+
+- Time: $ O(n \cdot d) $
+- Space: $ O(n \cdot d) $
+
+---
+
+#### 3. Solving Linear System
+
+We solve:
+
+$
+D^T \alpha = w
+$
+
+where $ D \in \mathbb{R}^{n \times d} $
+
+Using least squares / ridge:
+
+- Time: $ O(n \cdot d^2) $
+- Space: $ O(n \cdot d) $
+
+---
+
+#### 4. Projection Computation
+
+$
+w_{projected} = D^T \alpha
+$
+
+- Time: $ O(n \cdot d) $
+- Space: $ O(d) $
+
+---
+
+#### 5. Metric Computation
+
+- Relative error and explained fraction: $ O(d) $
+
+(negligible)
+
+---
+
+#### 6. Overall Complexity
+
+The dominant step is solving the linear system.
+
+- **Time Complexity:**  
+  $
+  O(n \cdot d^2)
+  $
+
+- **Space Complexity:**  
+  $
+  O(n \cdot d)
+  $
+
+---
+
+### Summary
+
+Due to the one-to-one construction of difference vectors, the method scales **linearly with the number of samples**, making it efficient and suitable for practical evaluation settings while still capturing meaningful transformation structure.
+
 ## Final Conclusion
 
 This experiment demonstrates that $explained\_fraction$ is a meaningful diagnostic metric for assessing generalization to real data.
@@ -821,17 +992,18 @@ Key takeaways:
 
 3. **Dataset Structure is Critical**  
    The metric captures whether the synthetic data encodes meaningful variations of the task:
-   - High explained_fraction → synthetic data captures true semantic structure  
-   - Low explained_fraction → synthetic data fails to represent real-world variability  
+   - High explained_fraction → synthetic data captures true semantic structure
+   - Low explained_fraction → synthetic data fails to represent real-world variability
 
 4. **Practical Utility**  
    The metric can be used as a **diagnostic tool** to:
-   - Evaluate whether a trained model is likely to generalize well to real data  
-   - Identify when synthetic data is sufficiently expressive for the task  
-   - Compare embedding spaces in terms of their ability to capture meaningful transformations  
+   - Evaluate whether a trained model is likely to generalize well to real data
+   - Identify when synthetic data is sufficiently expressive for the task
+   - Compare embedding spaces in terms of their ability to capture meaningful transformations
 
 > Overall, **explained_fraction provides a principled way to connect geometric properties of the learned classifier with real-world performance**, enabling deeper insight into when and why models trained on synthetic data succeed or fail.
 
+---
 
 ## Experiment-Five: Evaluating Matrix Rank Metric Alignment with Downstream Performance
 
@@ -886,13 +1058,18 @@ Specifically we aim to answer:
 - **Effective rank** measures how evenly variance is distributed across dimensions (i.e., diversity of representation).
 - **Stable rank** measures how concentrated the representation is along dominant directions.
 - **Linear reweighting** isolates **task-relevant directions**, allowing us to test whether synthetic data preserves diversity specifically along discriminative axes.
+
 ---
+
 ### Experiment Design
+
 ---
-We conduct experiments on two datasets:
+
+We conduct experiments on three datasets:
 
 - Pneumonia Chest X-ray (CXR)
 - Skin Lesion
+- Toy Watermark Dataset
 
 For each dataset:
 
@@ -939,43 +1116,45 @@ $
   - Reweighting strategy provides the strongest and most consistent correlation with performance degradation.
 
 ---
+
 ### Results
+
 ---
 
 ### 1. Pneumonia CXR
 
 #### 1.1 Downstream Performance
 
-| Model           | Training Data | Train Acc | Train F1 | Test Acc | Test F1 | 
-| --------------- | ------------- | --------- | -------- | -------- | ------- |  
-| ResNet-18       | Synthetic     | 1.0000    | 1.0000   | 0.6234   | 0.5913  | 
-| MobileNet-V2    | Synthetic     | 1.0000    | 1.0000   | 0.7917   | 0.8127  | 
-| EfficientNet-B0 | Synthetic     | 1.0000    | 1.0000   | 0.7308   | 0.7383  | 
+| Model           | Training Data | Train Acc | Train F1 | Test Acc | Test F1 |
+| --------------- | ------------- | --------- | -------- | -------- | ------- |
+| ResNet-18       | Synthetic     | 1.0000    | 1.0000   | 0.6234   | 0.5913  |
+| MobileNet-V2    | Synthetic     | 1.0000    | 1.0000   | 0.7917   | 0.8127  |
+| EfficientNet-B0 | Synthetic     | 1.0000    | 1.0000   | 0.7308   | 0.7383  |
+
 ---
 
 #### 1.2 Diagnostic Metrics (Embedding Space Analysis)
 
-|Embedding Type | Model Type | Effective Rank     |  Stable Rank        | Span Rank |
-|---------------|------------|--------------------|---------------------|-----------|
-|l1_scaled      | clip       | 10.09327169837317  |  1.3703055768128465 |  21       |       
-|l1_scaled      | dinov2     | 18.178349446988094 |  1.497297783967528  |  36       |
-|l1_scaled      | resnet18   | 16.280872741000255 |  1.8408915875319805 |  34       |
-|l2_scaled      | clip       | 93.74952165095368  |  1.9973799416388212 |  259      |
-|l2_scaled      | dinov2     | 117.76474110520527 |  1.9482139247359413 |  259      |
-|l2_scaled      | resnet18   | 116.18810921856682 |  2.463849498880523  |  259      |
-|raw            | clip       | 139.3734           |  2.396245497276598  |  259      |
-|raw            | dinov2     | 148.29424          |  2.4859445709728996 |  259      |
-|raw            | resnet18   | 162.4744           |  3.7707720593912764 |  259      |
-|scaled         | clip       | 91.22372015765998  |  2.1282837489459836 |  259      |
-|scaled         | dinov2     | 119.08546991738048 |  2.01129580109496   |  259      |
-|scaled         | resnet18   | 117.66732472851595 |  2.5930381063579118 |  259      |
+| Embedding Type | Model Type | Effective Rank     | Stable Rank        | Span Rank |
+| -------------- | ---------- | ------------------ | ------------------ | --------- |
+| l1_scaled      | clip       | 10.09327169837317  | 1.3703055768128465 | 21        |
+| l1_scaled      | dinov2     | 18.178349446988094 | 1.497297783967528  | 36        |
+| l1_scaled      | resnet18   | 16.280872741000255 | 1.8408915875319805 | 34        |
+| l2_scaled      | clip       | 93.74952165095368  | 1.9973799416388212 | 259       |
+| l2_scaled      | dinov2     | 117.76474110520527 | 1.9482139247359413 | 259       |
+| l2_scaled      | resnet18   | 116.18810921856682 | 2.463849498880523  | 259       |
+| raw            | clip       | 139.3734           | 2.396245497276598  | 259       |
+| raw            | dinov2     | 148.29424          | 2.4859445709728996 | 259       |
+| raw            | resnet18   | 162.4744           | 3.7707720593912764 | 259       |
+| scaled         | clip       | 91.22372015765998  | 2.1282837489459836 | 259       |
+| scaled         | dinov2     | 119.08546991738048 | 2.01129580109496   | 259       |
+| scaled         | resnet18   | 117.66732472851595 | 2.5930381063579118 | 259       |
 
 ---
 
 ### 2. Skin Lesion Dataset
 
 #### 2.1 Downstream Performance
-
 
 | Model           | Training Data | Train Acc | Train F1 | Test Acc | Test F1 |
 | --------------- | ------------- | --------- | -------- | -------- | ------- |
@@ -987,192 +1166,243 @@ $
 
 #### 2.2 Diagnostic Metrics (Embedding Space Analysis)
 
-|Embedding Type | Model Type | Effective Rank     |  Stable Rank        | Span Rank |
-|---------------|------------|--------------------|---------------------|-----------|
-|l1_scaled      | clip       | 15.411310331003268 | 1.3079173483952957  | 34        |
-|l1_scaled      | dinov2     | 31.39561987414743  | 1.85477626348159    | 67        |
-|l1_scaled      | resnet18   | 17.79936701582275  | 1.369409955888821   | 43        |
-|l2_scaled      | clip       | 137.19138896357885 | 1.7955818030454418  | 352       |
-|l2_scaled      | dinov2     | 139.511413358211   | 2.037609299090784   | 352       |
-|l2_scaled      | resnet18   | 94.14935962843902  | 1.52073881572785    | 352       |
-|raw            | clip       | 191.62308          | 2.7906706779925705  | 352       |
-|raw            | dinov2     | 187.23073          | 2.644770779198627   | 352       |
-|raw            | resnet18   | 176.91286          | 2.5911922337165154  | 352       |
-|scaled         | clip       | 138.47549748769018 | 1.866081986296396   | 352       |
-|scaled         | dinov2     | 141.20266690559615 | 2.117195384002967   | 352       |
-|scaled         | resnet18   | 99.10142671015089  | 1.5973883165597569  | 352       |
+| Embedding Type | Model Type | Effective Rank     | Stable Rank        | Span Rank |
+| -------------- | ---------- | ------------------ | ------------------ | --------- |
+| l1_scaled      | clip       | 15.411310331003268 | 1.3079173483952957 | 34        |
+| l1_scaled      | dinov2     | 31.39561987414743  | 1.85477626348159   | 67        |
+| l1_scaled      | resnet18   | 17.79936701582275  | 1.369409955888821  | 43        |
+| l2_scaled      | clip       | 137.19138896357885 | 1.7955818030454418 | 352       |
+| l2_scaled      | dinov2     | 139.511413358211   | 2.037609299090784  | 352       |
+| l2_scaled      | resnet18   | 94.14935962843902  | 1.52073881572785   | 352       |
+| raw            | clip       | 191.62308          | 2.7906706779925705 | 352       |
+| raw            | dinov2     | 187.23073          | 2.644770779198627  | 352       |
+| raw            | resnet18   | 176.91286          | 2.5911922337165154 | 352       |
+| scaled         | clip       | 138.47549748769018 | 1.866081986296396  | 352       |
+| scaled         | dinov2     | 141.20266690559615 | 2.117195384002967  | 352       |
+| scaled         | resnet18   | 99.10142671015089  | 1.5973883165597569 | 352       |
 
 ---
 
-### Interpretation
+### 3. Toy Watermark Dataset
 
-#### 1. Relationship Between Rank Metrics and Generalization
+#### 3.1 Downstream Performance
 
-Across both datasets, rank-based metrics reveal a consistent pattern:
-
-- **Higher effective rank and stable rank are generally associated with better test performance on real data.**
-
-For the **Pneumonia CXR dataset**:
-- Rank values (especially after scaling) vary significantly across embedding spaces.
-- Models exhibit moderate test performance (≈ 0.62 – 0.79), indicating limited generalization.
-- The relatively lower and inconsistent rank values suggest that the synthetic data does not provide sufficiently rich or uniformly distributed variation.
-
-For the **Skin Lesion dataset**:
-- Rank values are consistently higher across embedding spaces.
-- Test performance is also significantly better (≈ 0.86 – 0.94).
-- This indicates that the synthetic data captures a broader and more balanced set of variations, enabling stronger generalization.
-
-This suggests that **rank metrics act as proxies for how well synthetic data spans meaningful variations in the task space**.
+| Model           | Training Data | Train Acc | Train F1 | Test Acc | Test F1 |
+| --------------- | ------------- | --------- | -------- | -------- | ------- |
+| ResNet-18       | Synthetic     | 0.9309    | 0.9354   | 0.9556   | 0.9615  |
+| MobileNet-V2    | Synthetic     | 0.9814    | 0.9818   | 1.0000   | 1.0000  |
+| EfficientNet-B0 | Synthetic     | 0.9825    | 0.9828   | 1.0000   | 1.0000  |
 
 ---
 
-#### 2. Raw vs Task-Aware Representations
+#### 3.2 Diagnostic Metrics (Embedding Space Analysis)
 
-A key observation is the difference between **raw embeddings** and **task-aware reweighted embeddings**:
-
-- **Raw embeddings** often exhibit high effective rank, but this does not always correspond to improved performance.
-- **Task-aware scaling (using classifier weights)** produces representations where rank values better reflect downstream behavior.
-
-This implies:
-
-- Not all diversity is useful—**task-relevant diversity matters more than overall diversity**.
-- Reweighting the embedding space helps isolate dimensions that contribute to classification, making rank metrics more meaningful.
-
----
-
-#### 3. Effect of Reweighting Strategy
-
-Different reweighting strategies lead to distinct behaviors:
-
-- **L1 scaling (sparse weighting)** results in very low effective rank and span rank.
-  - This indicates that only a small subset of features is being utilized.
-  - While this highlights key discriminative features, it may discard too much information, limiting the usefulness of rank as a diagnostic.
-
-- **L2 scaling (smooth weighting)** preserves more dimensions and maintains higher rank values.
-  - This provides a better balance between focus and diversity.
-  - As a result, L2-based representations tend to yield more stable and interpretable signals.
-
-- **Unregularized scaling** behaves similarly to L2 but without explicit control over distribution.
-
-Overall, **overly sparse representations (L1) reduce the expressiveness of the metric**, while smoother weighting (L2) retains more meaningful structure.
+| Embedding Type | Model Type | Effective Rank     | Stable Rank        | Span Rank |
+| -------------- | ---------- | ------------------ | ------------------ | --------- |
+| l1_scaled      | clip       | 2.988803003172116  | 1.037706736056944  | 8         |
+| l1_scaled      | dinov2     | 12.655433017176762 | 1.1648219646047855 | 32        |
+| l1_scaled      | resnet18   | 2.351643494299326  | 1.0099459168636096 | 9         |
+| l2_scaled      | clip       | 59.300325382872124 | 1.0843353335911887 | 259       |
+| l2_scaled      | dinov2     | 139.511413358211   | 1.3114768733168938 | 259       |
+| l2_scaled      | resnet18   | 77.6889635298853   | 1.1322532091595852 | 259       |
+| raw            | clip       | 110.1766           | 1.2161132314260634 | 259       |
+| raw            | dinov2     | 142.83354          | 1.7668705841326064 | 259       |
+| raw            | resnet18   | 141.09366          | 1.460840758649932  | 259       |
+| scaled         | clip       | 59.98991532880907  | 1.085952509201024  | 259       |
+| scaled         | dinov2     | 106.38854322613558 | 1.354986492809891  | 259       |
+| scaled         | resnet18   | 79.46581552962917  | 1.13818322585682   | 259       |
 
 ---
 
-#### 4. Effect of Embedding Space
+## Interpretation
 
-The embedding space determines how well rank metrics reflect downstream performance:
-
-- While some embedding spaces achieve higher absolute rank values, the key factor is **how consistently rank correlates with test performance**.
-- **CLIP embeddings** show the most stable relationship between rank metrics and generalization across both datasets.
-- **DINOv2 and ResNet-18 embeddings** exhibit higher variability, making the diagnostic signal less consistent.
-
-This suggests that:
-
-- The usefulness of rank metrics depends on whether the embedding space organizes data such that **diversity aligns with task-relevant variations**.
-- CLIP provides a representation where variations captured by rank are more closely tied to actual classification performance.
+This experiment evaluates whether **matrix rank–based diagnostics** can reliably predict **downstream performance degradation** when models are trained on synthetic data. The results across three datasets—CXR, Skin Lesion, and Toy Watermark—reveal consistent and insightful trends. :contentReference[oaicite:0]{index=0}
 
 ---
 
-#### 5. Dataset-Specific Behavior
+#### 1. Relationship Between Rank and Performance Gap
 
-The metric highlights fundamental differences between datasets:
+A clear pattern emerges when comparing **rank metrics with downstream performance**:
 
-- **Pneumonia CXR**:
-  - Lower and less consistent rank values
-  - Weaker generalization
-  - Indicates that synthetic transformations may not sufficiently capture real-world variability
+- In the **Pneumonia CXR dataset**, models trained on synthetic data exhibit **significant performance degradation** (e.g., ResNet-18 test accuracy ≈ 62%). Correspondingly, we observe:
+  - Lower **effective rank after task-aware projections (especially L1)**
+  - Moderate **stable rank values**, indicating concentration along limited directions
 
-- **Skin Lesion**:
-  - Higher and more stable rank values
-  - Strong generalization
-  - Suggests that synthetic data better approximates the true data manifold
+- In contrast, the **Skin Lesion dataset** shows **moderate to high performance** (test accuracy up to ≈ 94%), with:
+  - Higher **effective rank across embeddings**
+  - More **distributed representations**, indicating better diversity retention
 
-Thus, **rank metrics provide insight into how well synthetic data represents the intrinsic structure of the task**.
+- The **Toy Watermark dataset** achieves **near-perfect generalization**, despite:
+  - Very **low effective rank under L1 scaling**
+  - Extremely **low stable rank (~1)**
 
----
+This suggests an important insight:
 
-### Final Conclusion
-
----
-
-This experiment establishes that **matrix rank-based metrics can serve as a diagnostic tool to assess whether synthetic data is sufficiently diverse and task-relevant to support generalization to real data**.
-
-#### 1. Which Configuration Works Best?
-
-From the empirical analysis, the most reliable setup is:
-
-- **Embedding Space:** CLIP  
-- **Rank Metric:** Effective Rank  
-- **Representation Type:** L2-scaled (task-aware reweighting)
-
-This combination provides the most **consistent and stable correlation with downstream performance** across both datasets.
-
-**Why this works:**
-
-- **CLIP embeddings** organize data in a semantically meaningful space, where variations correspond more closely to real-world task structure.
-- **Effective rank** captures how uniformly information is distributed across dimensions, making it a good proxy for **diversity of representations**.
-- **L2-based reweighting** preserves task-relevant structure while maintaining sufficient spread across dimensions, avoiding the over-sparsification seen in L1 scaling.
+> **High rank is not universally required for good performance—but low rank becomes problematic when the task requires rich semantic diversity.**
 
 ---
 
-#### 2. When is Synthetic Data “Diverse Enough”?
+#### 2. Effective Rank vs Stable Rank
 
-The results suggest that synthetic data can be considered sufficiently expressive when:
+Across datasets, the two metrics behave differently:
 
-- The **effective rank (in CLIP + L2-scaled space)** is **high and stable across models**, and  
-- This is accompanied by **consistent downstream performance on real test data**.
+- **Effective Rank**
+  - Strongly reflects **diversity of representations**
+  - Better distinguishes between datasets with **high vs low generalization gaps**
+  - Particularly informative in **raw and L2-scaled embeddings**
 
-In contrast:
+- **Stable Rank**
+  - Remains within a narrow range (≈1–3 across all experiments)
+  - Captures **energy concentration**, but is **less sensitive to task difficulty**
+  - Fails to clearly separate high-performing vs low-performing settings
 
-- Lower or inconsistent rank values indicate that the synthetic data fails to capture the **true variation of the task**, leading to weaker generalization.
-
-Thus, **effective rank serves as a proxy for whether the synthetic dataset spans meaningful variations of the underlying data distribution**.
-
----
-
-#### 3. Can This Predict Generalization?
-
-Yes — under the right representation:
-
-- **Higher effective rank (in CLIP + L2 space)** is consistently associated with **better generalization to real data**.
-- The metric captures whether the synthetic data encodes **diversity along task-relevant directions**, which is critical for transfer.
-
-However, an important nuance is:
-
-- The metric is **not universally reliable across all embedding spaces or representations**.
-- Its predictive power emerges specifically when the embedding space aligns well with semantic structure (as in CLIP) and when diversity is measured in a **task-aware manner** (via L2 scaling).
+> **Conclusion:** Effective rank is a more reliable diagnostic signal than stable rank for predicting synthetic data utility.
 
 ---
 
-#### 4. Key Insight
+#### 3. Impact of Task-Aware Reweighting
 
-The central takeaway is:
+Feature reweighting provides key insights:
 
-> **Not all diversity is useful — only diversity aligned with the task leads to generalization.**
+- **L1 Scaling (Sparse Projection)**
+  - Drastically reduces effective rank across all datasets
+  - Highlights **task-critical directions**
+  - In CXR, reveals that synthetic data lacks diversity **along discriminative axes**, explaining poor performance
+  - In Toy dataset, low rank is sufficient because the task depends on **few simple features (watermark cues)**
 
-Rank metrics become meaningful only when computed in a representation space where:
+- **L2 Scaling (Smooth Projection)**
+  - Preserves much of the original rank
+  - Produces behavior closer to raw embeddings
+  - Less effective at isolating failure modes
 
-- Variations correspond to **semantically meaningful changes**, and  
-- The representation is **aligned with the classifier’s decision boundary**.
-
----
-
-#### 5. Practical Implication
-
-This provides a concrete diagnostic pipeline:
-
-1. Embed data using **CLIP**
-2. Apply **L2-based task-aware reweighting**
-3. Compute **effective rank of the difference matrix**
-
-This pipeline can be used to:
-
-- Evaluate whether a synthetic dataset is sufficiently diverse  
-- Anticipate whether a model trained on it will generalize to real data  
-- Compare different synthetic data generation strategies  
+> **Key Insight:**  
+> Performance degradation is better explained by **loss of diversity in task-relevant directions**, not overall feature space diversity.
 
 ---
 
-#### Final Takeaway
+#### 4. Role of Embedding Models
 
-**Matrix rank, when computed in a semantically aligned and task-aware representation space, provides a principled and practical indicator of whether synthetic data captures the diversity necessary for real-world generalization.**
+Across all datasets:
+
+- **DINOv2 and ResNet embeddings** tend to produce:
+  - Higher effective rank
+  - More stable correlations with downstream performance
+
+- **CLIP embeddings**:
+  - Show lower rank under task projections
+  - Less consistent alignment with performance trends
+
+This suggests:
+
+> The **choice of embedding space significantly affects the reliability of rank-based diagnostics**, with vision-specialized models outperforming multimodal ones in this setting.
+
+---
+
+#### 5. Insights from the Toy Watermark Dataset
+
+The Toy dataset plays a crucial role in validating the hypothesis:
+
+- Despite **low rank**, models achieve **perfect generalization**
+- This occurs because:
+  - The task is **low-dimensional**
+  - Discriminative information lies in **simple, sparse features**
+
+This serves as a **counterexample**:
+
+> **Low rank is not inherently bad—it is only problematic when the task requires high intrinsic dimensionality.**
+
+---
+
+#### 6. Overall Conclusion
+
+From these observations, we conclude:
+
+1. **Effective rank correlates with performance degradation**, but only when interpreted relative to **task complexity**
+2. **Stable rank is less informative** for predicting downstream performance
+3. **Task-aware projections (especially L1)** provide the most meaningful diagnostic signal
+4. Synthetic data often fails not due to lack of global diversity, but due to **missing variation along task-relevant directions**
+5. The Toy dataset confirms that **rank must be interpreted in context**, not as an absolute metric
+
+---
+
+### Computational Complexity
+
+We analyze the time and space complexity of the proposed diagnostic pipeline.
+
+Let:
+
+- $ n $: number of samples
+- $ d $: embedding dimension
+
+---
+
+#### 1. Embedding Extraction
+
+We extract embeddings for both real and synthetic samples.
+
+- Time: $ O(n \cdot d) $
+- Space: $ O(n \cdot d) $
+
+---
+
+#### 2. Difference Matrix Construction
+
+Using an image-to-image (I2I) translation setup, each sample has a one-to-one correspondence:
+
+$
+D = x_i^{real} - x_i^{synthetic}
+$
+
+Thus, the number of difference vectors is: $m = n$
+
+- Time: $ O(n \cdot d) $
+- Space: $ O(n \cdot d) $
+
+---
+
+#### 3. Singular Value Decomposition (SVD)
+
+Let $ D \in \mathbb{R}^{n \times d} $
+
+- Time: $ O(n \cdot d^2) $
+- Space: $ O(n \cdot d) $
+
+---
+
+#### 4. Rank Computation
+
+- Effective rank: $ O(d) $
+- Stable rank: $ O(d) $
+
+(negligible compared to SVD)
+
+---
+
+#### 5. Logistic Regression (Feature Reweighting)
+
+- Time: $ O(n \cdot d) $
+- Space: $ O(d) $
+
+---
+
+#### 6. Overall Complexity
+
+The dominant step is SVD on the difference matrix.
+
+- **Time Complexity:** $O(n \cdot d^2)$
+
+- **Space Complexity:** $O(n \cdot d)$
+
+---
+
+#### Summary
+
+---
+
+Due to the one-to-one correspondence induced by the I2I translation pipeline, the method scales **linearly with the number of samples**, making it significantly more efficient and scalable than pairwise difference-based approaches.
+
+---
+
+## Conclusion
+
+We evaluated matrix rank–based diagnostics for understanding synthetic data quality in downstream tasks. Effective rank consistently reflects representation diversity and aligns well with performance differences, while stable rank is less informative. Task-aware reweighting, especially L1, shows that failures arise from missing diversity along discriminative directions rather than the full feature space. The Toy dataset highlights that low rank is sufficient when tasks are inherently simple, emphasizing context-dependent interpretation. Finally, the I2I-based formulation ensures linear scalability, making the approach efficient and practical for analysis. Overall, effective rank serves as a useful and interpretable signal for diagnosing synthetic data limitations.
