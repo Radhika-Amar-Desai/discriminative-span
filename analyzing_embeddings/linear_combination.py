@@ -16,6 +16,7 @@ import numpy as np
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 from scipy.optimize import nnls
+from sklearn.linear_model import Lasso
 
 from utils.auto_logger import log_run
 
@@ -144,6 +145,22 @@ def solve_ridge(D, w, lam):
 
     return alpha
 
+def solve_l1(D, w, lam=0.01):
+    """
+    Solves: min ||w - D^T alpha||^2 + lam * ||alpha||_1
+    """
+
+    Dt = D.T  # shape: (d, n)
+
+    # Lasso expects: y ≈ X beta
+    # Here: w ≈ Dt @ alpha → X = Dt, beta = alpha
+    model = Lasso(alpha=lam, fit_intercept=False, max_iter=10000)
+
+    model.fit(Dt, w)
+
+    alpha = model.coef_
+
+    return alpha
 
 # -----------------------------------------------------
 # NNLS solver
@@ -325,10 +342,11 @@ def run_span_analysis(
     ranks = {
         "effective_rank": eff_rank,
         "span_rank": span_rank,
-        "stable_rank": stable_rank
+        "stable_rank": stable_rank,
+        "fixed": 150
     }
 
-    solvers = ["least_squares", "ridge", "nnls"]
+    solvers = ["least_squares", "ridge", "nnls", "l1"]
 
     results = []
 
@@ -357,6 +375,10 @@ def run_span_analysis(
 
                 elif solver == "nnls":
                     alpha = solve_nnls(D_reduced, w)
+                    rel_error, explained_fraction, alpha_mean, alpha_var = compute_metrics(D_reduced, w, alpha)
+
+                elif solver == "l1":
+                    alpha = solve_l1(D, w)
                     rel_error, explained_fraction, alpha_mean, alpha_var = compute_metrics(D_reduced, w, alpha)
 
 

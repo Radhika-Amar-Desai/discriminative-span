@@ -16,6 +16,76 @@ def load_npy(path):
     return np.load(path)
 
 
+def verify_folder_structure(embedding_fldr, verbose=False):
+    """
+    Verifies that the embedding folder structure is valid for difference vector construction.
+
+    Expected structure:
+    embedding_fldr/
+        class1/
+            file1.npy
+            file2.npy
+        class2/
+            file1.npy
+            file2.npy
+    """
+
+    if not os.path.isdir(embedding_fldr):
+        raise ValueError(f"{embedding_fldr} is not a valid directory")
+
+    class_names = sorted(os.listdir(embedding_fldr))
+    class_paths = [
+        os.path.join(embedding_fldr, c)
+        for c in class_names
+        if os.path.isdir(os.path.join(embedding_fldr, c))
+    ]
+
+    if len(class_paths) < 2:
+        raise ValueError("Need at least 2 class folders for difference vectors")
+
+    file_sets = []
+
+    for class_path in class_paths:
+        files = os.listdir(class_path)
+
+        npy_files = set()
+        for f in files:
+            fpath = os.path.join(class_path, f)
+
+            if os.path.isdir(fpath):
+                if verbose:
+                    print(f"⚠️ Warning: Nested directory found: {fpath}")
+
+            elif f.endswith(".npy"):
+                npy_files.add(f)
+
+            else:
+                if verbose:
+                    print(f"⚠️ Ignoring non-npy file: {fpath}")
+
+        if len(npy_files) == 0:
+            raise ValueError(f"No .npy files found in {class_path}")
+
+        file_sets.append(npy_files)
+
+    # Check intersection
+    common_files = set.intersection(*file_sets)
+
+    if len(common_files) == 0:
+        raise ValueError("No common .npy filenames across classes")
+
+    # Check consistency
+    for i, file_set in enumerate(file_sets):
+        missing = common_files.symmetric_difference(file_set)
+        if missing and verbose:
+            print(f"⚠️ Class {class_names[i]} has mismatched files: {missing}")
+
+    if verbose:
+        print(f"✅ Found {len(class_paths)} classes")
+        print(f"✅ {len(common_files)} common aligned .npy files")
+
+    return True
+
 # -----------------------------------------------------
 # Rank Metrics
 # -----------------------------------------------------
@@ -76,6 +146,7 @@ def construct_difference_vectors(embedding_fldr):
 
 def get_matrix_ranks(embedding_fldr):
 
+    verify_folder_structure(embedding_fldr)
     D = construct_difference_vectors(embedding_fldr)
 
     effective_rank = get_effective_rank(D)
