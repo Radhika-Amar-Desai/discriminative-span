@@ -1,9 +1,9 @@
 import os
 
-DATASET_NAME = "apples_and_oranges"
+DATASET_NAME = "skin_lesion"
 
 
-BASE_DIR = r"C:\Users\97433\Knowing_the_difference\data\embeddings\apples_and_oranges"
+BASE_DIR = r"C:\Users\97433\Knowing_the_difference\data\embeddings\custom_negative_dataset"
 
 SYNTHETIC_DATA_DIR = os.path.join(BASE_DIR, "synthetic_data")
 

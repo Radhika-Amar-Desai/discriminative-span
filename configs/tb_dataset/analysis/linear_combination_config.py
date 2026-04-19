@@ -1,12 +1,12 @@
 import os
 
-DATASET_NAME = "skin_lesion_experiment"
+DATASET_NAME = "tb_dataset"
 
 OUTPUT_DIR = r"C:\Users\97433\Knowing_the_difference\output"
 
 ridge_lambda = 0.01
 
-BASE_DATA_DIR = r'C:\Users\97433\Knowing_the_difference\data\embeddings\horses_and_zebra'
+BASE_DATA_DIR = r'C:\Users\97433\Knowing_the_difference\data\embeddings\tb_dataset'
 BASE_SYNTHETIC_DATA_DIR = os.path.join(BASE_DATA_DIR, 'synthetic_data')
 BASE_REAL_DATA_DIR = os.path.join(BASE_DATA_DIR, 'real_data')
 
@@ -18,8 +18,8 @@ SCALED_SYNTHETIC_DATA_DIR = os.path.join(BASE_SYNTHETIC_DATA_DIR, 'scaled')
 
 RAW_SYNTHETIC_DATA_DIR = os.path.join(BASE_SYNTHETIC_DATA_DIR, 'raw')
 
-CLASS_A = 'horses'
-CLASS_B = 'zebra'
+CLASS_A = 'NORMAL'
+CLASS_B = 'TB'
 
 
 EMBEDDINGS = {
@@ -96,11 +96,11 @@ EMBEDDINGS = {
     # },
 
     "raw": {
-        "resnet18": {
-            "real_A": os.path.join(BASE_REAL_DATA_DIR, 'raw', 'resnet18', CLASS_A),
-            "synthetic_B": os.path.join(RAW_SYNTHETIC_DATA_DIR, 'resnet18', CLASS_B),
-            "real_B": os.path.join(BASE_REAL_DATA_DIR, 'raw', 'resnet18', CLASS_B)
-        },
+        # "resnet18": {
+        #     "real_A": os.path.join(BASE_REAL_DATA_DIR, 'raw', 'resnet18', CLASS_A),
+        #     "synthetic_B": os.path.join(RAW_SYNTHETIC_DATA_DIR, 'resnet18', CLASS_B),
+        #     "real_B": os.path.join(BASE_REAL_DATA_DIR, 'raw', 'resnet18', CLASS_B)
+        # },
 
         "clip": {
             "real_A": os.path.join(BASE_REAL_DATA_DIR, 'raw', 'clip', CLASS_A),
@@ -108,10 +108,10 @@ EMBEDDINGS = {
             "real_B": os.path.join(BASE_REAL_DATA_DIR, 'raw', 'clip', CLASS_B)
         },
 
-        "dinov2": {
-            "real_A": os.path.join(BASE_REAL_DATA_DIR, 'raw', 'dinov2', CLASS_A),
-            "synthetic_B": os.path.join(RAW_SYNTHETIC_DATA_DIR, 'dinov2', CLASS_B),
-            "real_B": os.path.join(BASE_REAL_DATA_DIR, 'raw', 'dinov2', CLASS_B)
-        }
+        # "dinov2": {
+        #     "real_A": os.path.join(BASE_REAL_DATA_DIR, 'raw', 'dinov2', CLASS_A),
+        #     "synthetic_B": os.path.join(RAW_SYNTHETIC_DATA_DIR, 'dinov2', CLASS_B),
+        #     "real_B": os.path.join(BASE_REAL_DATA_DIR, 'raw', 'dinov2', CLASS_B)
+        # }
     }
 }
