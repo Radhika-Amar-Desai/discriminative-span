@@ -87,6 +87,47 @@ def verify_folder_structure(embedding_fldr, verbose=False):
     return True
 
 # -----------------------------------------------------
+# Conditioning Metrics
+# -----------------------------------------------------
+
+def get_singular_values(D):
+    _, S, _ = np.linalg.svd(D, full_matrices=False)
+    return S
+
+
+def get_condition_number(D):
+    S = get_singular_values(D)
+    if len(S) == 0:
+        return 0
+    sigma_max = np.max(S)
+    sigma_min = np.min(S)
+
+    # avoid divide by zero
+    if sigma_min < 1e-12:
+        return np.inf
+    return sigma_max / sigma_min
+
+
+def get_min_singular_value(D):
+    S = get_singular_values(D)
+    return np.min(S) if len(S) > 0 else 0
+
+
+def get_spectrum_decay_ratio(D, k=5):
+    """
+    Ratio of top-k singular values energy to total energy
+    Helps show low-dimensional structure
+    """
+    S = get_singular_values(D)
+    if len(S) == 0:
+        return 0
+
+    total_energy = np.sum(S)
+    top_k_energy = np.sum(S[:min(k, len(S))])
+
+    return top_k_energy / total_energy if total_energy != 0 else 0
+
+# -----------------------------------------------------
 # Rank Metrics
 # -----------------------------------------------------
 
@@ -113,38 +154,82 @@ def get_effective_rank(D):
 # Core Logic
 # -----------------------------------------------------
 
+# def construct_difference_vectors(embedding_fldr):
+#     class_names = sorted(os.listdir(embedding_fldr))
+#     class_paths = list(filter(os.path.isdir, [os.path.join(embedding_fldr, c) for c in class_names]))
+
+#     # get common filenames across all classes
+#     file_sets = [set(os.listdir(p)) for p in class_paths]
+#     common_filenames = sorted(get_intersection(file_sets))
+
+#     D_list = []
+
+#     for fname in common_filenames:
+#         embeddings = []
+
+#         for path in class_paths:
+#             fpath = os.path.join(path, fname)
+#             emb = load_npy(fpath).flatten()
+#             embeddings.append(emb)
+
+#         # pairwise differences
+#         for i in range(len(embeddings)):
+#             for j in range(i + 1, len(embeddings)):
+#                 diff = embeddings[i] - embeddings[j]
+#                 D_list.append(diff)
+
+#     if len(D_list) == 0:
+#         raise ValueError("No difference vectors constructed")
+
+#     D = np.stack(D_list, axis=0)
+#     return D
+
 def construct_difference_vectors(embedding_fldr):
+    """
+    Constructs aligned difference vectors between TWO classes only.
+    (Same logic as span_analysis code)
+    """
+
     class_names = sorted(os.listdir(embedding_fldr))
-    class_paths = list(filter(os.path.isdir, [os.path.join(embedding_fldr, c) for c in class_names]))
+    class_paths = [
+        os.path.join(embedding_fldr, c)
+        for c in class_names
+        if os.path.isdir(os.path.join(embedding_fldr, c))
+    ]
 
-    # get common filenames across all classes
-    file_sets = [set(os.listdir(p)) for p in class_paths]
-    common_filenames = sorted(get_intersection(file_sets))
+    if len(class_paths) != 2:
+        raise ValueError(
+            f"Expected exactly 2 classes for aligned differences, got {len(class_paths)}"
+        )
 
-    D_list = []
+    path_A, path_B = class_paths
 
-    for fname in common_filenames:
-        embeddings = []
+    files_A = {f for f in os.listdir(path_A) if f.endswith(".npy")}
+    files_B = {f for f in os.listdir(path_B) if f.endswith(".npy")}
 
-        for path in class_paths:
-            fpath = os.path.join(path, fname)
-            emb = load_npy(fpath).flatten()
-            embeddings.append(emb)
+    common_files = sorted(files_A.intersection(files_B))
 
-        # pairwise differences
-        for i in range(len(embeddings)):
-            for j in range(i + 1, len(embeddings)):
-                diff = embeddings[i] - embeddings[j]
-                D_list.append(diff)
+    if len(common_files) == 0:
+        raise ValueError("No matching filenames between classes")
 
-    if len(D_list) == 0:
-        raise ValueError("No difference vectors constructed")
+    A = []
+    B = []
 
-    D = np.stack(D_list, axis=0)
+    for fname in common_files:
+        emb_A = np.load(os.path.join(path_A, fname)).flatten()
+        emb_B = np.load(os.path.join(path_B, fname)).flatten()
+
+        A.append(emb_A)
+        B.append(emb_B)
+
+    A = np.stack(A, axis=0)
+    B = np.stack(B, axis=0)
+
+    D = B - A
+
     return D
 
-
-def get_matrix_ranks(embedding_fldr):
+def get_matrix_stats(embedding_fldr):
 
     verify_folder_structure(embedding_fldr)
     D = construct_difference_vectors(embedding_fldr)
@@ -153,7 +238,18 @@ def get_matrix_ranks(embedding_fldr):
     span_rank = get_span_rank(D)
     stable_rank = get_stable_rank(D)
 
-    return effective_rank, span_rank, stable_rank
+    condition_number = get_condition_number(D)
+    min_singular = get_min_singular_value(D)
+    spectrum_ratio = get_spectrum_decay_ratio(D, k=5)
+
+    return (
+        effective_rank,
+        span_rank,
+        stable_rank,
+        condition_number,
+        min_singular,
+        spectrum_ratio
+    )
 
 
 # -----------------------------------------------------
@@ -162,7 +258,15 @@ def get_matrix_ranks(embedding_fldr):
 
 def write_to_csv_file(results, results_csv_path):
 
-    header = ["embedding_type", "model_type", "effective_rank", "stable_rank", "span_rank"]
+    header = [
+    "embedding_type",
+    "model_type",
+    "effective_rank",
+    "stable_rank",
+    "span_rank",
+    "condition_number",
+    "min_singular_value",
+    "top5_spectrum_ratio"]
 
     with open(results_csv_path, mode='w', newline='') as f:
         writer = csv.writer(f)
@@ -194,22 +298,29 @@ def matrix_rank_analysis(embedding_parent_fldr, results_csv_path):
             if not os.path.isdir(embedding_model_path):
                 continue
 
-            effective_rank, span_rank, stable_rank = get_matrix_ranks(
-                embedding_model_path
-            )
+            (
+                effective_rank,
+                span_rank,
+                stable_rank,
+                condition_number,
+                min_singular,
+                spectrum_ratio
+            ) = get_matrix_stats(embedding_model_path)
 
             row = [
                 embedding_type,
                 model_type,
                 effective_rank,
                 stable_rank,
-                span_rank
+                span_rank,
+                condition_number,
+                min_singular,
+                spectrum_ratio
             ]
-
+            
             results.append(row)
 
     write_to_csv_file(results, results_csv_path)
-
 
 # -----------------------------------------------------
 # CLI Entry Point

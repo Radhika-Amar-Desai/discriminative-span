@@ -318,10 +318,10 @@ def run_span_analysis(
         B = np.vstack([syn_dict[f] for f in common_files])
 
     # scaling stays same
-    A_scaled = scaler.transform(A)
-    B_scaled = scaler.transform(B)
+    # A_scaled = scaler.transform(A)
+    # B_scaled = scaler.transform(B)
 
-    D = B_scaled - A_scaled
+    D = B - A
 
     logger.info(f"Difference matrix shape: {D.shape}")
     logger.info(f"Number of paired samples: {len(common_files)}")
