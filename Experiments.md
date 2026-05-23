@@ -885,7 +885,7 @@ This design allows us to evaluate whether **explained_fraction behaves consisten
 | nnls          | 0.768     | 0.1294  | 0.821      | 5          |
 | ridge         | 0.959     | 0.0099  | 0.975      | 5          |
 
-![CLIP_correlation_best_F1_score](.\plots\clip_correlation.png)
+![CLIP_correlation_best_F1_score](results_and_analysis\plots\clip_correlation.png)
 
 #### 2. Resnet-18
 
@@ -896,7 +896,7 @@ This design allows us to evaluate whether **explained_fraction behaves consisten
 | nnls          | 0.64      | 0.2443  | 0.462      | 5          |
 | ridge         | 0.962     | 0.0087  | 0.975      | 5          |
 
-![Resnet18_correlation](.\plots\resnet18_correlation.png)
+![Resnet18_correlation](results_and_analysis\plots\resnet18_correlation.png)
 
 ### 3. Dino-V2
 
@@ -907,7 +907,7 @@ This design allows us to evaluate whether **explained_fraction behaves consisten
 | nnls          | 0.777     | 0.1217  | 0.821      | 5          |
 | ridge         | 0.946     | 0.015   | 0.667      | 5          |
 
-![Dinov2_correlation](.\plots\dinov2_correlation.png)
+![Dinov2_correlation](results_and_analysis\plots\dinov2_correlation.png)
 
 ## Interpretation
 
