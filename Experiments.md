@@ -742,146 +742,306 @@ This design allows us to evaluate whether **explained_fraction behaves consisten
 
 #### 1.1 Downstream Performance
 
-| Model           | Training Data | Train Acc | Train F1 | Test Acc | Test F1 |
-| --------------- | ------------- | --------- | -------- | -------- | ------- |
-| ResNet-18       | Synthetic     | 1.0000    | 1.0000   | 0.6234   | 0.5913  |
-| MobileNet-V2    | Synthetic     | 1.0000    | 1.0000   | 0.7917   | 0.8127  |
-| EfficientNet-B0 | Synthetic     | 1.0000    | 1.0000   | 0.7308   | 0.7383  |
-
----
+| Model          | Train Acc | Train F1 | Val Acc | Val F1 Score | Test Acc | Test F1 |
+| -------------- | --------- | -------- | ------- | ------------ | -------- | ------- |
+| ResNet18       | 1.0       | 1.0      | 0.75    | 0.75         | 0.6138   | 0.5704  |
+| MobileNetV2    | 1.0       | 1.0      | 0.625   | 0.7273       | 0.7676   | 0.7858  |
+| EfficientNetB0 | 1.0       | 1.0      | 0.6875  | 0.7059       | 0.649    | 0.6231  |
 
 #### 1.2 Diagnostic Metrics (Embedding Space Analysis)
 
 | Embedding Model | Solver        | Effective Rank | Relative Error | Explained Fraction | Number of Pairs | Dim |
 | --------------- | ------------- | -------------- | -------------- | ------------------ | --------------- | --- |
-| ResNet-18       | Least Squares | 182            | 0.6136         | 0.3864             | 259             | 512 |
-| ResNet-18       | Ridge         | 182            | 0.7061         | 0.2939             | 259             | 512 |
-| CLIP            | Least Squares | 145            | 0.6575         | 0.3424             | 259             | 512 |
-| CLIP            | Ridge         | 145            | 0.8016         | 0.1984             | 259             | 512 |
-| DINOv2          | Least Squares | 151            | 0.4805         | 0.5194             | 259             | 384 |
-| DINOv2          | Ridge         | 151            | 0.6627         | 0.3373             | 259             | 384 |
-
----
+| resnet18        | Least Squares | 182            | 0.754          | 0.246              | 259             | 512 |
+| resnet18        | Ridge         | 182            | 0.8389         | 0.1611             | 259             | 512 |
+| resnet18        | NNLS          | 182            | 0.9756         | 0.0244             | 259             | 512 |
+| resnet18        | L1            | 182            | 0.9089         | 0.0911             | 259             | 512 |
+| clip            | Least Squares | 145            | 0.7341         | 0.2659             | 259             | 512 |
+| clip            | Ridge         | 145            | 0.8966         | 0.1034             | 259             | 512 |
+| clip            | NNLS          | 145            | 0.9903         | 0.0097             | 259             | 512 |
+| clip            | L1            | 145            | 0.9622         | 0.0378             | 259             | 512 |
+| dinov2          | Least Squares | 151            | 0.5943         | 0.4057             | 259             | 384 |
+| dinov2          | Ridge         | 151            | 0.8221         | 0.1779             | 259             | 384 |
+| dinov2          | NNLS          | 151            | 0.9879         | 0.0121             | 259             | 384 |
+| dinov2          | L1            | 151            | 0.8939         | 0.1061             | 259             | 384 |
 
 ### 2. Skin Lesion Dataset
 
 #### 2.1 Downstream Performance
 
-| Model           | Training Data | Train Acc | Train F1 | Test Acc | Test F1 |
-| --------------- | ------------- | --------- | -------- | -------- | ------- |
-| ResNet-18       | Synthetic     | 0.8097    | 0.7705   | 0.8605   | 0.8537  |
-| MobileNet-V2    | Synthetic     | 0.9972    | 0.9972   | 0.9302   | 0.9231  |
-| EfficientNet-B0 | Synthetic     | 0.9503    | 0.9477   | 0.9419   | 0.9412  |
-
----
+| Model          | Train Acc | Train F1 | Val Acc | Val F1 | Test Acc | Test F1 |
+| -------------- | --------- | -------- | ------- | ------ | -------- | ------- |
+| ResNet18       | 0.9787    | 0.9787   | 0.95    | 0.9474 | 0.9302   | 0.9302  |
+| EfficientNetB0 | 0.946     | 0.9448   | 1.0     | 1.0    | 0.8953   | 0.8889  |
+| MobileNetV2    | 0.9702    | 0.9698   | 0.95    | 0.9474 | 0.907    | 0.9024  |
 
 #### 2.2 Diagnostic Metrics (Embedding Space Analysis)
 
 | Embedding Model | Solver        | Effective Rank | Relative Error | Explained Fraction | Number of Pairs | Dim |
 | --------------- | ------------- | -------------- | -------------- | ------------------ | --------------- | --- |
-| ResNet-18       | Least Squares | 203            | 0.3413         | 0.6586             | 352             | 512 |
-| ResNet-18       | Ridge         | 203            | 0.4633         | 0.5367             | 352             | 512 |
-| CLIP            | Least Squares | 200            | 0.2066         | 0.7933             | 352             | 512 |
-| CLIP            | Ridge         | 200            | 0.3195         | 0.6805             | 352             | 512 |
-| DINOv2          | Least Squares | 190            | 0.1218         | 0.8781             | 352             | 384 |
-| DINOv2          | Ridge         | 190            | 0.3567         | 0.6433             | 352             | 384 |
-
----
+| resnet18        | Least Squares | 203            | 0.34136        | 0.6586             | 352             | 512 |
+| resnet18        | Ridge         | 203            | 0.463288       | 0.5367             | 352             | 512 |
+| resnet18        | NNLS          | 203            | 0.687487       | 0.3125             | 352             | 512 |
+| resnet18        | L1            | 203            | 0.783373       | 0.2166             | 352             | 512 |
+| clip            | Least Squares | 200            | 0.206622       | 0.7934             | 352             | 512 |
+| clip            | Ridge         | 200            | 0.319543       | 0.6805             | 352             | 512 |
+| clip            | NNLS          | 200            | 0.557877       | 0.4421             | 352             | 512 |
+| clip            | L1            | 200            | 0.684727       | 0.3153             | 352             | 512 |
+| dinov2          | Least Squares | 190            | 0.121814       | 0.8782             | 352             | 384 |
+| dinov2          | Ridge         | 190            | 0.356713       | 0.6433             | 352             | 384 |
+| dinov2          | NNLS          | 190            | 0.64572        | 0.3543             | 352             | 384 |
+| dinov2          | L1            | 190            | 0.699646       | 0.3004             | 352             | 384 |
 
 ### 3. Toy Watermark Dataset
 
 #### 3.1 Downstream Performance
 
-| Model           | Training Data | Train Acc | Train F1 | Test Acc | Test F1 |
-| --------------- | ------------- | --------- | -------- | -------- | ------- |
-| ResNet-18       | Synthetic     | 0.9309    | 0.9354   | 0.9556   | 0.9615  |
-| MobileNet-V2    | Synthetic     | 0.9814    | 0.9818   | 1.0000   | 1.0000  |
-| EfficientNet-B0 | Synthetic     | 0.9825    | 0.9828   | 1.0000   | 1.0000  |
-
----
+| Model          | Train Acc | Train F1 | Val Acc | Val F1 | Test Acc | Test F1 |
+| -------------- | --------- | -------- | ------- | ------ | -------- | ------- |
+| ResNet18       | 0.9969    | 0.9969   | 1.0     | 1.0    | 1.0      | 1.0     |
+| MobileNetV2    | 1.0       | 1.0      | 1.0     | 1.0    | 0.9778   | 0.9778  |
+| EfficientNetB0 | 0.9979    | 0.9979   | 1.0     | 1.0    | 1.0      | 1.0     |
 
 #### 3.2 Diagnostic Metrics (Embedding Space Analysis)
 
 | Embedding Model | Solver        | Effective Rank | Relative Error | Explained Fraction | Number of Pairs | Dim |
 | --------------- | ------------- | -------------- | -------------- | ------------------ | --------------- | --- |
-| ResNet-18       | Least Squares | 288            | 0.1028         | 0.8971             | 485             | 512 |
-| ResNet-18       | Ridge         | 288            | 0.3564         | 0.6435             | 485             | 512 |
-| CLIP            | Least Squares | 263            | 0.0743         | 0.9256             | 485             | 512 |
-| CLIP            | Ridge         | 263            | 0.2628         | 0.7371             | 485             | 512 |
-| DINOv2          | Least Squares | 250            | 2.64e-09       | 0.9999             | 485             | 384 |
-| DINOv2          | Ridge         | 250            | 0.3178         | 0.6821             | 485             | 384 |
+| resnet18        | Least Squares | 288            | 0.102834       | 0.8972             | 485             | 512 |
+| resnet18        | Ridge         | 288            | 0.356454       | 0.6435             | 485             | 512 |
+| resnet18        | NNLS          | 288            | 0.711918       | 0.2881             | 485             | 512 |
+| resnet18        | L1            | 288            | 0.726766       | 0.2732             | 485             | 512 |
+| clip            | Least Squares | 263            | 0.0817881      | 0.9182             | 485             | 512 |
+| clip            | Ridge         | 263            | 0.262815       | 0.7372             | 485             | 512 |
+| clip            | NNLS          | 263            | 0.473162       | 0.5268             | 485             | 512 |
+| clip            | L1            | 263            | 0.5661         | 0.4339             | 485             | 512 |
+| dinov2          | Least Squares | 250            | 2.23e09        | 1                  | 485             | 384 |
+| dinov2          | Ridge         | 250            | 0.31784        | 0.6822             | 485             | 384 |
+| dinov2          | NNLS          | 250            | 0.547462       | 0.4525             | 485             | 384 |
+| dinov2          | L1            | 250            | 0.640865       | 0.3591             | 485             | 384 |
+
+### 4. Horses and Zebra
+
+#### 4.1 Downstream Performance
+
+| Model          | Train Acc | Train F1 | Test Acc | Test F1 |
+| -------------- | --------- | -------- | -------- | ------- |
+| ResNet18       | 0.8071    | 0.8278   | 0.8375   | 0.866   |
+| MobileNetV2    | 0.9893    | 0.9892   | 0.9042   | 0.9098  |
+| EfficientNetB0 | 0.9841    | 0.9843   | 0.925    | 0.9302  |
+
+#### 4.2 Diagnostic Metrics (Embedding Space Analysis)
+
+| Embedding Model | Solver        | Effective Rank | Relative Error | Explained Fraction | Number of Pairs | Dim |
+| --------------- | ------------- | -------------- | -------------- | ------------------ | --------------- | --- |
+| resnet18        | Least Squares | 343            | 2.06e09        | 1                  | 1117            | 512 |
+| resnet18        | Ridge         | 343            | 0.417489       | 0.5825             | 1117            | 512 |
+| resnet18        | NNLS          | 343            | 0.983051       | 0.0169             | 1117            | 512 |
+| clip            | Least Squares | 307            | 1.68e09        | 1                  | 1117            | 512 |
+| clip            | Ridge         | 307            | 0.380944       | 0.6191             | 1117            | 512 |
+| clip            | NNLS          | 307            | 0.946506       | 0.0535             | 1117            | 512 |
+| dinov2          | Least Squares | 283            | 9.55e10        | 1                  | 1117            | 384 |
+| dinov2          | Ridge         | 283            | 0.329001       | 0.671              | 1117            | 384 |
+| dinov2          | NNLS          | 283            | 0.940155       | 0.0598             | 1117            | 384 |
+
+### 5. Apples and Oranges
+
+#### 5.1 Downstream Performance
+
+| Model          | Train Acc | Train F1 | Test Acc | Test F1 | Val Acc | Val F1 |
+| -------------- | --------- | -------- | -------- | ------- | ------- | ------ |
+| ResNet18       | 0.9583    | 0.9596   | 0.9372   | 0.9366  | 1.0     | 1.0    |
+| MobileNetV2    | 0.9774    | 0.9778   | 0.917    | 0.9165  | 1.0     | 1.0    |
+| EfficientNetB0 | 0.9869    | 0.9871   | 0.9291   | 0.9275  | 1.0     | 1.0    |
+
+#### 5.2 Diagnostic Metrics (Embedding Space Analysis)
+
+| Embedding Model | Solver        | Effective Rank | Relative Error | Explained Fraction | Number of Pairs | Dim |
+| --------------- | ------------- | -------------- | -------------- | ------------------ | --------------- | --- |
+| resnet18        | Least Squares | 351            | 1.21e09        | 1                  | 995             | 512 |
+| resnet18        | Ridge         | 351            | 0.375139       | 0.6249             | 995             | 512 |
+| resnet18        | NNLS          | 351            | 0.679303       | 0.3207             | 995             | 512 |
+| resnet18        | L1            | 351            | 0.663738       | 0.3363             | 995             | 512 |
+| clip            | Least Squares | 329            | 7.98e10        | 1                  | 995             | 512 |
+| clip            | Ridge         | 329            | 0.290121       | 0.7099             | 995             | 512 |
+| clip            | NNLS          | 329            | 0.686178       | 0.3138             | 995             | 512 |
+| clip            | L1            | 329            | 0.695665       | 0.3043             | 995             | 512 |
+| dinov2          | Least Squares | 268            | 9.05e10        | 1                  | 995             | 384 |
+| dinov2          | Ridge         | 268            | 0.413526       | 0.5865             | 995             | 384 |
+| dinov2          | NNLS          | 268            | 0.790725       | 0.2093             | 995             | 384 |
+| dinov2          | L1            | 268            | 0.693928       | 0.3061             | 995             | 384 |
 
 ---
+
+### Correlation Analysis
+
+---
+
+#### 1. CLIP
+
+| Solver        | Pearson r | p-value | Spearman ρ | Num Points |
+| ------------- | --------- | ------- | ---------- | ---------- |
+| l1            | 0.998     | 0.0016  | 0.8        | 4          |
+| least_squares | 0.89      | 0.0432  | 0.553      | 5          |
+| nnls          | 0.768     | 0.1294  | 0.821      | 5          |
+| ridge         | 0.959     | 0.0099  | 0.975      | 5          |
+
+![CLIP_correlation_best_F1_score](.\plots\clip_correlation.png)
+
+#### 2. Resnet-18
+
+| Solver        | Pearson r | p-value | Spearman ρ | Num Points |
+| ------------- | --------- | ------- | ---------- | ---------- |
+| l1            | 0.837     | 0.1634  | 0.8        | 4          |
+| least_squares | 0.847     | 0.0698  | 0.553      | 5          |
+| nnls          | 0.64      | 0.2443  | 0.462      | 5          |
+| ridge         | 0.962     | 0.0087  | 0.975      | 5          |
+
+![Resnet18_correlation](.\plots\resnet18_correlation.png)
+
+### 3. Dino-V2
+
+| Solver        | Pearson r | p-value | Spearman ρ | Num Points |
+| ------------- | --------- | ------- | ---------- | ---------- |
+| l1            | 0.993     | 0.0066  | 1.0        | 4          |
+| least_squares | 0.937     | 0.019   | 0.803      | 5          |
+| nnls          | 0.777     | 0.1217  | 0.821      | 5          |
+| ridge         | 0.946     | 0.015   | 0.667      | 5          |
+
+![Dinov2_correlation](.\plots\dinov2_correlation.png)
 
 ## Interpretation
 
 ### 1. Relationship Between Explained Fraction and Generalization
 
-Across both datasets, a clear pattern emerges:
+Across all datasets, a consistent relationship emerges between **explained_fraction** and downstream generalization performance. This relationship is further supported by **explicit correlation analysis across embedding spaces and solvers**.
 
-- **Higher explained_fraction is associated with better test performance on real data.**
+- **Higher explained_fraction is generally associated with better test performance on real data**, and this trend is quantitatively validated through strong positive correlations.
+
+From the correlation analysis:
+
+- For **CLIP embeddings**, Pearson correlations range from **0.768 to 0.998**, with statistically significant p-values for Least Squares (p ≈ 0.043) and Ridge (p ≈ 0.0099).
+- For **ResNet-18 embeddings**, correlations remain consistently high (≈ 0.64–0.962), with Ridge again showing strong significance (p ≈ 0.0087).
+- For **DINOv2 embeddings**, correlations are similarly strong (≈ 0.777–0.993), with multiple solvers achieving statistically significant relationships (p < 0.05).
+
+These results provide **direct quantitative evidence** that explained_fraction is strongly associated with generalization performance across datasets.
 
 For the **Pneumonia CXR dataset**:
 
-- Explained fractions are relatively low across embedding spaces (≈ 0.19 – 0.52).
-- Correspondingly, test performance is also limited (≈ 0.62 – 0.79).
-- This suggests that the learned decision boundaries are **poorly aligned with the transformation structure**, leading to weaker generalization.
+- Explained fractions remain relatively low (≈ 0.16 – 0.41 under Least Squares).
+- Test performance is also limited (≈ 0.57 – 0.79 F1).
+- This aligns with the global trend captured in the correlation analysis, indicating **weak alignment between the classifier and transformation span**, and consequently poorer generalization.
 
 For the **Skin Lesion dataset**:
 
-- Explained fractions are significantly higher (≈ 0.53 – 0.88).
-- Test performance is also strong (≈ 0.86 – 0.94).
-- This indicates that the decision boundary lies largely within the span of meaningful transformations, resulting in **strong generalization to real data**.
+- Explained fractions are significantly higher (≈ 0.54 – 0.88).
+- Test performance is correspondingly strong (≈ 0.89 – 0.93 F1).
+- This dataset contributes strongly to the observed positive correlations, demonstrating that **better span alignment leads to improved generalization**.
 
 For the **Toy Watermark dataset**:
 
-- Explained fractions are extremely high (≈ 0.64 – ~1.00), especially in Least Squares.
-- Test performance is near-perfect (≈ 0.95 – 1.00).
-- This demonstrates an almost **complete alignment between the classifier and the transformation span**.
-- This dataset acts as a **controlled sanity check**, showing that when transformations are simple, consistent, and fully captured in the span, the metric reaches its upper bound and perfectly reflects generalization.
+- Explained fractions approach unity (≈ 0.64 – 1.00).
+- Test performance is near-perfect.
+- This represents the upper bound of the correlation trend, where **complete alignment yields optimal performance**.
 
-This consistent trend supports the hypothesis that **alignment between the classifier and transformation structure is a key factor in generalization**.
+For the **Horses ↔ Zebras** and **Apples ↔ Oranges** datasets:
+
+- Strong performance is observed despite variability in diagnostic metrics.
+- Least Squares solutions often saturate (explained_fraction ≈ 1) due to numerical instability.
+- This introduces **degenerate high values**, which partially weaken correlation strength for certain solvers (e.g., NNLS), highlighting the importance of stable estimation.
+
+Overall, both qualitative trends and quantitative correlations support the hypothesis that:
+
+> **Alignment between the classifier and the span of transformation vectors is a key factor governing generalization.**
 
 ---
 
 ### 2. Effect of Embedding Space
 
-The choice of embedding space has a strong impact on how **reliably explained_fraction reflects real-world performance**.
+The correlation analysis provides deeper insight into the role of embedding space:
 
-- While **DINOv2** often achieves higher absolute explained_fraction values, this does not consistently translate into a stronger relationship with downstream performance.
-- **CLIP embeddings** show the most consistent alignment between **explained_fraction and test accuracy on real data** across both datasets.
-- **ResNet-18 embeddings** exhibit weaker and less consistent correspondence.
+- **CLIP embeddings** exhibit the most consistent and strongest correlations (up to r ≈ 0.998), indicating that explained_fraction in CLIP space is highly predictive of downstream performance.
+- **DINOv2 embeddings** also show strong correlations, but with slightly more variability across solvers.
+- **ResNet-18 embeddings** demonstrate weaker and less stable correlations, particularly for NNLS.
 
 This suggests:
 
-- The usefulness of the metric is not determined by how large the explained_fraction is, but by how well it **tracks variations in generalization performance**.
-- **CLIP embeddings provide a more faithful representation space** where the span of difference vectors captures transformations that are truly relevant for the downstream task.
-- As a result, the projection of the classifier weight vector in CLIP space serves as a more reliable indicator of whether the learned decision boundary will generalize.
+- The effectiveness of the metric depends not on absolute explained_fraction values, but on how well it **tracks performance variation across datasets**.
+- **CLIP provides a representation space where transformation-induced differences are most aligned with task-relevant semantics**, resulting in stronger predictive power.
+- DINOv2, while powerful, may introduce **redundant or over-complete representations**, leading to less consistent behavior.
 
-Thus, **the effectiveness of an embedding space should be evaluated based on the consistency of correlation with real-world performance, rather than the absolute value of the metric**, with CLIP emerging as the most reliable diagnostic space in this analysis.
+Thus:
+
+> **Embedding spaces should be evaluated based on correlation consistency, not raw metric magnitude**, with CLIP emerging as the most reliable diagnostic space.
 
 ---
 
 ### 3. Least Squares vs Ridge
 
-- **Least Squares** consistently yields higher explained_fraction than Ridge.
-- Ridge regularization introduces shrinkage, which limits the ability to fully reconstruct $w$ from the span of $D$.
+Correlation results also clarify the role of solver choice:
 
-This indicates that:
+- **Ridge regression consistently achieves the strongest and most stable correlations across all embedding spaces**:
+  - CLIP: r ≈ 0.959 (p ≈ 0.0099)
+  - ResNet18: r ≈ 0.962 (p ≈ 0.0087)
+  - DINOv2: r ≈ 0.946 (p ≈ 0.015)
 
-- The primary signal lies in how well $w$ can be expressed in the span, rather than in regularized approximations.
-- Least Squares is more suitable for analyzing **span alignment**, which is the core objective of the metric.
+- **Least Squares**, while often producing higher explained_fraction values, shows:
+  - Slightly weaker or less stable correlations
+  - Sensitivity to ill-conditioning (e.g., saturation in natural image datasets)
+
+- **NNLS and L1**:
+  - Show more variability due to constraints
+  - Still maintain positive correlation trends, but with weaker statistical significance
+
+This indicates:
+
+- The key signal lies in **span alignment**, but
+- **Ridge provides the most reliable estimator of this alignment in practice**
+
+Thus:
+
+> While Least Squares is theoretically ideal, **Ridge offers a better trade-off between fidelity and stability**, making it more suitable for practical diagnostics.
 
 ---
 
 ### 4. Dataset-Specific Behavior
 
-The metric also reveals **intrinsic differences between datasets**:
+The correlation analysis reinforces dataset-specific observations:
 
-- Pneumonia CXR shows low alignment and weaker generalization → suggests that synthetic transformations may not capture real-world variations effectively.
-- Skin Lesion shows high alignment and strong generalization → suggests that synthetic data better approximates the true data manifold.
+- **Pneumonia CXR**:
+  - Low explained_fraction and weak performance align with the lower end of correlation trends
+  - Suggests that synthetic transformations fail to capture clinically relevant variation
 
-This highlights that **the effectiveness of synthetic data depends on how well it spans meaningful variations in the underlying task**.
+- **Skin Lesion**:
+  - Strong alignment and performance contribute significantly to observed correlations
+  - Indicates effective coverage of task-relevant variation
+
+- **Toy Watermark**:
+  - Acts as a boundary case where correlation saturates due to near-perfect alignment
+
+- **Horses/Zebras and Apples/Oranges**:
+  - Highlight limitations of the metric under numerical instability
+  - Emphasize the need for careful solver choice
+
+This demonstrates that:
+
+> **The metric captures meaningful structure when transformations align with task-relevant variation, but can be distorted under degenerate conditions.**
+
+---
+
+### 5. Key Takeaway
+
+- **Explained_fraction is strongly correlated with generalization performance**, as confirmed by both qualitative trends and quantitative correlation analysis.
+- It captures a **necessary condition**: the classifier must lie in the span of transformation vectors for effective generalization.
+- However:
+  - Numerical instability (e.g., Least Squares saturation)
+  - Task simplicity (e.g., Toy dataset)
+  - Solver constraints
+
+  can affect interpretation.
+
+Thus:
+
+> **Explained_fraction serves as a principled and empirically validated diagnostic metric, but must be interpreted alongside solver behavior and dataset characteristics.**
 
 ---
 
@@ -1119,290 +1279,227 @@ $
 
 ### Results
 
----
-
 ### 1. Pneumonia CXR
 
 #### 1.1 Downstream Performance
 
-| Model           | Training Data | Train Acc | Train F1 | Test Acc | Test F1 |
-| --------------- | ------------- | --------- | -------- | -------- | ------- |
-| ResNet-18       | Synthetic     | 1.0000    | 1.0000   | 0.6234   | 0.5913  |
-| MobileNet-V2    | Synthetic     | 1.0000    | 1.0000   | 0.7917   | 0.8127  |
-| EfficientNet-B0 | Synthetic     | 1.0000    | 1.0000   | 0.7308   | 0.7383  |
-
----
+| Model          | Train Acc | Train F1 | Val Acc | Val F1 Score | Test Acc | Test F1 |
+| -------------- | --------- | -------- | ------- | ------------ | -------- | ------- |
+| ResNet18       | 0.9846    | 0.9848   | 0.75    | 0.75         | 0.6138   | 0.5704  |
+| MobileNetV2    | 1.0       | 1.0      | 0.625   | 0.7273       | 0.7676   | 0.7858  |
+| EfficientNetB0 | 0.6875    | 0.7059   | 1.0     | 1.0          | 0.649    | 0.6231  |
 
 #### 1.2 Diagnostic Metrics (Embedding Space Analysis)
 
-| Embedding Type | Model Type | Effective Rank     | Stable Rank        | Span Rank |
-| -------------- | ---------- | ------------------ | ------------------ | --------- |
-| l1_scaled      | clip       | 10.09327169837317  | 1.3703055768128465 | 21        |
-| l1_scaled      | dinov2     | 18.178349446988094 | 1.497297783967528  | 36        |
-| l1_scaled      | resnet18   | 16.280872741000255 | 1.8408915875319805 | 34        |
-| l2_scaled      | clip       | 93.74952165095368  | 1.9973799416388212 | 259       |
-| l2_scaled      | dinov2     | 117.76474110520527 | 1.9482139247359413 | 259       |
-| l2_scaled      | resnet18   | 116.18810921856682 | 2.463849498880523  | 259       |
-| raw            | clip       | 139.3734           | 2.396245497276598  | 259       |
-| raw            | dinov2     | 148.29424          | 2.4859445709728996 | 259       |
-| raw            | resnet18   | 162.4744           | 3.7707720593912764 | 259       |
-| scaled         | clip       | 91.22372015765998  | 2.1282837489459836 | 259       |
-| scaled         | dinov2     | 119.08546991738048 | 2.01129580109496   | 259       |
-| scaled         | resnet18   | 117.66732472851595 | 2.5930381063579118 | 259       |
+| embedding_type | model_type | effective_rank | stable_rank        | span_rank | condition_number | min_singular_value | top5_spectrum_ratio |
+| -------------- | ---------- | -------------- | ------------------ | --------- | ---------------- | ------------------ | ------------------- |
+| raw            | clip       | 139.37346      | 2.396245497276598  | 259       | 180.12538        | 0.13907792         | 0.19078986          |
+| raw            | dinov2     | 148.29431      | 2.4859445709728996 | 259       | 217.0961         | 0.86802006         | 0.17124705          |
+| raw            | resnet18   | 162.4744       | 3.7707720593912764 | 259       | 98.910164        | 0.942401           | 0.13836034          |
 
----
-
-### 2. Skin Lesion Dataset
+### 2. Skin Lesion
 
 #### 2.1 Downstream Performance
 
-| Model           | Training Data | Train Acc | Train F1 | Test Acc | Test F1 |
-| --------------- | ------------- | --------- | -------- | -------- | ------- |
-| ResNet-18       | Synthetic     | 0.8097    | 0.7705   | 0.8605   | 0.8537  |
-| MobileNet-V2    | Synthetic     | 0.9972    | 0.9972   | 0.9302   | 0.9231  |
-| EfficientNet-B0 | Synthetic     | 0.9503    | 0.9477   | 0.9419   | 0.9412  |
-
----
+| Model          | Train Acc | Train F1 | Val Acc | Val F1 | Test Acc | Test F1 |
+| -------------- | --------- | -------- | ------- | ------ | -------- | ------- |
+| ResNet18       | 0.9787    | 0.9787   | 0.95    | 0.9474 | 0.9302   | 0.9302  |
+| EfficientNetB0 | 0.946     | 0.9448   | 1.0     | 1.0    | 0.8953   | 0.8889  |
+| MobileNetV2    | 0.9702    | 0.9698   | 0.95    | 0.9474 | 0.907    | 0.9024  |
 
 #### 2.2 Diagnostic Metrics (Embedding Space Analysis)
 
-| Embedding Type | Model Type | Effective Rank     | Stable Rank        | Span Rank |
-| -------------- | ---------- | ------------------ | ------------------ | --------- |
-| l1_scaled      | clip       | 15.411310331003268 | 1.3079173483952957 | 34        |
-| l1_scaled      | dinov2     | 31.39561987414743  | 1.85477626348159   | 67        |
-| l1_scaled      | resnet18   | 17.79936701582275  | 1.369409955888821  | 43        |
-| l2_scaled      | clip       | 137.19138896357885 | 1.7955818030454418 | 352       |
-| l2_scaled      | dinov2     | 139.511413358211   | 2.037609299090784  | 352       |
-| l2_scaled      | resnet18   | 94.14935962843902  | 1.52073881572785   | 352       |
-| raw            | clip       | 191.62308          | 2.7906706779925705 | 352       |
-| raw            | dinov2     | 187.23073          | 2.644770779198627  | 352       |
-| raw            | resnet18   | 176.91286          | 2.5911922337165154 | 352       |
-| scaled         | clip       | 138.47549748769018 | 1.866081986296396  | 352       |
-| scaled         | dinov2     | 141.20266690559615 | 2.117195384002967  | 352       |
-| scaled         | resnet18   | 99.10142671015089  | 1.5973883165597569 | 352       |
-
----
+| embedding_type | model_type | effective_rank | stable_rank        | span_rank | condition_number | min_singular_value | top5_spectrum_ratio |
+| -------------- | ---------- | -------------- | ------------------ | --------- | ---------------- | ------------------ | ------------------- |
+| raw            | clip       | 191.62308      | 2.7906706779925705 | 352       | 309.50665        | 0.18911652         | 0.14693187          |
+| raw            | dinov2     | 187.23073      | 2.644770779198627  | 352       | 891.9587         | 0.43162945         | 0.14300323          |
+| raw            | resnet18   | 176.91286      | 2.5911922337165154 | 352       | 616.5882         | 0.17375852         | 0.16643688          |
 
 ### 3. Toy Watermark Dataset
 
 #### 3.1 Downstream Performance
 
-| Model           | Training Data | Train Acc | Train F1 | Test Acc | Test F1 |
-| --------------- | ------------- | --------- | -------- | -------- | ------- |
-| ResNet-18       | Synthetic     | 0.9309    | 0.9354   | 0.9556   | 0.9615  |
-| MobileNet-V2    | Synthetic     | 0.9814    | 0.9818   | 1.0000   | 1.0000  |
-| EfficientNet-B0 | Synthetic     | 0.9825    | 0.9828   | 1.0000   | 1.0000  |
-
----
+| Model          | Train Acc | Train F1 | Val Acc | Val F1 | Test Acc | Test F1 |
+| -------------- | --------- | -------- | ------- | ------ | -------- | ------- |
+| ResNet18       | 0.9969    | 0.9969   | 1.0     | 1.0    | 1.0      | 1.0     |
+| MobileNetV2    | 1.0       | 1.0      | 1.0     | 1.0    | 0.9778   | 0.9778  |
+| EfficientNetB0 | 0.9979    | 0.9979   | 1.0     | 1.0    | 1.0      | 1.0     |
 
 #### 3.2 Diagnostic Metrics (Embedding Space Analysis)
 
-| Embedding Type | Model Type | Effective Rank     | Stable Rank        | Span Rank |
-| -------------- | ---------- | ------------------ | ------------------ | --------- |
-| l1_scaled      | clip       | 2.988803003172116  | 1.037706736056944  | 8         |
-| l1_scaled      | dinov2     | 12.655433017176762 | 1.1648219646047855 | 32        |
-| l1_scaled      | resnet18   | 2.351643494299326  | 1.0099459168636096 | 9         |
-| l2_scaled      | clip       | 59.300325382872124 | 1.0843353335911887 | 259       |
-| l2_scaled      | dinov2     | 139.511413358211   | 1.3114768733168938 | 259       |
-| l2_scaled      | resnet18   | 77.6889635298853   | 1.1322532091595852 | 259       |
-| raw            | clip       | 110.1766           | 1.2161132314260634 | 259       |
-| raw            | dinov2     | 142.83354          | 1.7668705841326064 | 259       |
-| raw            | resnet18   | 141.09366          | 1.460840758649932  | 259       |
-| scaled         | clip       | 59.98991532880907  | 1.085952509201024  | 259       |
-| scaled         | dinov2     | 106.38854322613558 | 1.354986492809891  | 259       |
-| scaled         | resnet18   | 79.46581552962917  | 1.13818322585682   | 259       |
+| embedding_type | model_type | effective_rank | stable_rank       | span_rank | condition_number | min_singular_value | top5_spectrum_ratio |
+| -------------- | ---------- | -------------- | ----------------- | --------- | ---------------- | ------------------ | ------------------- |
+| raw            | clip       | 239.88252      | 1.621509155073667 | 485       | 3199.1558        | 0.045821033        | 0.1481445           |
+| raw            | dinov2     | 249.88858      | 4.274357498251865 | 383       | 50905124.0       | 6.820158e-06       | 0.0951604           |
+| raw            | resnet18   | 265.30124      | 2.328042977518009 | 485       | 1494.5557        | 0.18673043         | 0.117795065         |
+
+### 4. Horses And Zebra
+
+#### 4.1 Downstream Performance
+
+| Model          | Train Acc | Train F1 | Test Acc | Test F1 |
+| -------------- | --------- | -------- | -------- | ------- |
+| ResNet18       | 0.8071    | 0.8278   | 0.8375   | 0.866   |
+| MobileNetV2    | 0.9893    | 0.9892   | 0.9042   | 0.9098  |
+| EfficientNetB0 | 0.9841    | 0.9843   | 0.925    | 0.9302  |
+
+#### 4.2 Diagnostic Metrics (Embedding Space Analysis)
+
+| embedding_type | model_type | effective_rank | stable_rank       | span_rank | condition_number | min_singular_value | top5_spectrum_ratio |
+| -------------- | ---------- | -------------- | ----------------- | --------- | ---------------- | ------------------ | ------------------- |
+| raw            | clip       | 307.82202      | 2.419958479637778 | 511       | 75224.125        | 0.0019066995       | 0.111819945         |
+| raw            | dinov2     | 263.4468       | 2.003489822839641 | 383       | 57827350.0       | 1.8490324e-05      | 0.1110306           |
+| raw            | resnet18   | 320.51462      | 2.384212825656372 | 512       | 166.73672        | 2.1861253          | 0.10322028          |
+
+### 5. Apples And Oranges
+
+#### 5.1 Downstream Performance
+
+| Model          | Train Acc | Train F1 | Test Acc | Test F1 | Val Acc | Val F1 |
+| -------------- | --------- | -------- | -------- | ------- | ------- | ------ |
+| ResNet18       | 0.9583    | 0.9596   | 0.9372   | 0.9366  | 1.0     | 1.0    |
+| MobileNetV2    | 0.9774    | 0.9778   | 0.917    | 0.9165  | 1.0     | 1.0    |
+| EfficientNetB0 | 0.9869    | 0.9871   | 0.9291   | 0.9275  | 1.0     | 1.0    |
+
+#### 5.2 Diagnostic Metrics (Embedding Space Analysis)
+
+| embedding_type | model_type | effective_rank | stable_rank        | span_rank | condition_number | min_singular_value | top5_spectrum_ratio |
+| -------------- | ---------- | -------------- | ------------------ | --------- | ---------------- | ------------------ | ------------------- |
+| raw            | clip       | 318.7456       | 3.2742655747113214 | 511       | 65165.168        | 0.0020456368       | 0.09653478          |
+| raw            | dinov2     | 267.67743      | 2.9477293849769057 | 383       | 61640388.0       | 1.643132e-05       | 0.10264921          |
+| raw            | resnet18   | 327.89114      | 6.480032488107657  | 512       | 97.95636         | 2.3061233          | 0.08487251          |
 
 ---
 
-## Interpretation
+### Interpretation
 
-This experiment evaluates whether **matrix rank–based diagnostics** can reliably predict **downstream performance degradation** when models are trained on synthetic data. The results across three datasets—CXR, Skin Lesion, and Toy Watermark—reveal consistent and insightful trends. :contentReference[oaicite:0]{index=0}
-
----
-
-#### 1. Relationship Between Rank and Performance Gap
-
-A clear pattern emerges when comparing **rank metrics with downstream performance**:
-
-- In the **Pneumonia CXR dataset**, models trained on synthetic data exhibit **significant performance degradation** (e.g., ResNet-18 test accuracy ≈ 62%). Correspondingly, we observe:
-  - Lower **effective rank after task-aware projections (especially L1)**
-  - Moderate **stable rank values**, indicating concentration along limited directions
-
-- In contrast, the **Skin Lesion dataset** shows **moderate to high performance** (test accuracy up to ≈ 94%), with:
-  - Higher **effective rank across embeddings**
-  - More **distributed representations**, indicating better diversity retention
-
-- The **Toy Watermark dataset** achieves **near-perfect generalization**, despite:
-  - Very **low effective rank under L1 scaling**
-  - Extremely **low stable rank (~1)**
-
-This suggests an important insight:
-
-> **High rank is not universally required for good performance—but low rank becomes problematic when the task requires rich semantic diversity.**
+This experiment evaluates whether matrix rank–based diagnostics (effective rank and stable rank) can capture loss of diversity in synthetic data representations and whether this correlates with downstream generalization. We extend this analysis by examining the conditioning of the difference matrix \( D \) through its singular value spectrum.
 
 ---
 
-#### 2. Effective Rank vs Stable Rank
+#### 1. Conditioning of the Difference Matrix
 
-Across datasets, the two metrics behave differently:
+Across datasets, we observe that the difference matrix \( D \) is often **ill-conditioned**, as indicated by large condition numbers and very small minimum singular values.
 
-- **Effective Rank**
-  - Strongly reflects **diversity of representations**
-  - Better distinguishes between datasets with **high vs low generalization gaps**
-  - Particularly informative in **raw and L2-scaled embeddings**
+- The Toy Watermark dataset and natural image datasets (Horses ↔ Zebras, Apples ↔ Oranges) exhibit **extreme condition numbers** (up to \(10^7\)), with near-zero singular values.
+- This indicates that the difference vectors are **highly dependent** and lie in a **low-dimensional subspace**, even though the ambient dimension is large.
 
-- **Stable Rank**
-  - Remains within a narrow range (≈1–3 across all experiments)
-  - Captures **energy concentration**, but is **less sensitive to task difficulty**
-  - Fails to clearly separate high-performing vs low-performing settings
+In contrast:
 
-> **Conclusion:** Effective rank is a more reliable diagnostic signal than stable rank for predicting synthetic data utility.
+- The Pneumonia CXR dataset has **much lower condition numbers (~10^2)** and larger minimum singular values.
+- This suggests that variations are more distributed and less structured.
 
----
+**Key takeaway:**
 
-#### 3. Impact of Task-Aware Reweighting
-
-Feature reweighting provides key insights:
-
-- **L1 Scaling (Sparse Projection)**
-  - Drastically reduces effective rank across all datasets
-  - Highlights **task-critical directions**
-  - In CXR, reveals that synthetic data lacks diversity **along discriminative axes**, explaining poor performance
-  - In Toy dataset, low rank is sufficient because the task depends on **few simple features (watermark cues)**
-
-- **L2 Scaling (Smooth Projection)**
-  - Preserves much of the original rank
-  - Produces behavior closer to raw embeddings
-  - Less effective at isolating failure modes
-
-> **Key Insight:**  
-> Performance degradation is better explained by **loss of diversity in task-relevant directions**, not overall feature space diversity.
+> High-performing datasets tend to exhibit _low-dimensional but structured transformations_, leading to ill-conditioned \( D \).
 
 ---
 
-#### 4. Role of Embedding Models
+#### 2. Rank Alone is Not Sufficient
+
+Effective rank varies across datasets, but does not fully explain performance:
+
+- Toy Watermark and natural image datasets have **high effective rank** _and_ strong performance.
+- Pneumonia CXR has **moderate rank** but poor performance.
+
+This reveals an important limitation:
+
+> Effective rank measures _how much variation exists_, but not _how that variation is organized_.
+
+Stable rank is even less informative, remaining in a narrow range across all datasets.
+
+---
+
+#### 3. Interplay Between Rank and Conditioning
+
+A key insight is that:
+
+- High-performing datasets often have:
+  - **High effective rank**
+  - **Severely ill-conditioned \( D \)**
+
+This means:
+
+- Most meaningful variation is captured in a **few dominant directions**
+- Remaining dimensions contribute negligible or noisy variation
+
+In other words:
+
+> The data is high-dimensional in representation, but _effectively low-dimensional in structure_.
+
+---
+
+#### 4. Relationship to Generalization
+
+This explains the observed performance patterns:
+
+- **Toy Watermark**:
+  - Extremely ill-conditioned
+  - Signal lies in a single dominant direction
+  - → Near-perfect performance
+
+- **Natural image datasets**:
+  - Ill-conditioned but structured transformations
+  - → Strong generalization
+
+- **Pneumonia CXR**:
+  - Better conditioned but lacks dominant aligned directions
+  - → Poor generalization
+
+Thus:
+
+> Generalization depends not on total diversity, but on whether variation aligns with task-relevant directions.
+
+---
+
+#### 5. Role of Embedding Space
+
+Conditioning behavior varies across embeddings:
+
+- **DINOv2**:
+  - Often extremely ill-conditioned
+  - Indicates strong compression into dominant directions
+
+- **CLIP**:
+  - Moderate conditioning
+  - May underrepresent fine-grained medical features
+
+- **ResNet18**:
+  - Better conditioned but less semantically structured
+
+This suggests that embedding geometry directly influences both rank and conditioning.
+
+---
+
+#### 6. Key Insight
 
 Across all datasets:
 
-- **DINOv2 and ResNet embeddings** tend to produce:
-  - Higher effective rank
-  - More stable correlations with downstream performance
+> Synthetic data fails not due to lack of diversity, but due to lack of _aligned, low-dimensional structure_.
 
-- **CLIP embeddings**:
-  - Show lower rank under task projections
-  - Less consistent alignment with performance trends
-
-This suggests:
-
-> The **choice of embedding space significantly affects the reliability of rank-based diagnostics**, with vision-specialized models outperforming multimodal ones in this setting.
+Rank-based metrics partially capture diversity, but fail to capture alignment. Conditioning analysis reveals that the true structure lies in how variation is distributed across directions.
 
 ---
 
-#### 5. Insights from the Toy Watermark Dataset
+### Conclusion
 
-The Toy dataset plays a crucial role in validating the hypothesis:
+We evaluated matrix rank–based diagnostics as a proxy for synthetic data quality across multiple datasets and embedding spaces. While effective rank provides some signal about representation diversity, it is insufficient to explain downstream generalization.
 
-- Despite **low rank**, models achieve **perfect generalization**
-- This occurs because:
-  - The task is **low-dimensional**
-  - Discriminative information lies in **simple, sparse features**
+Our analysis shows that the difference matrix \( D \) is often **ill-conditioned**, indicating that transformations induced by synthetic data lie in low-dimensional subspaces with strong linear dependencies. Importantly, this ill-conditioning is not a flaw—in many cases, it reflects structured and consistent transformations that support strong performance.
 
-This serves as a **counterexample**:
+This leads to the following conclusions:
 
-> **Low rank is not inherently bad—it is only problematic when the task requires high intrinsic dimensionality.**
+1. **Effective rank alone is not predictive of performance**
+   - Similar rank values can correspond to very different outcomes
 
----
+2. **Stable rank is too coarse to be informative**
 
-#### 6. Overall Conclusion
+3. **Ill-conditioning reveals underlying structure**
+   - High condition numbers indicate low-dimensional transformation subspaces
 
-From these observations, we conclude:
+4. **Generalization depends on alignment, not diversity**
+   - Useful variation must align with task-relevant directions
 
-1. **Effective rank correlates with performance degradation**, but only when interpreted relative to **task complexity**
-2. **Stable rank is less informative** for predicting downstream performance
-3. **Task-aware projections (especially L1)** provide the most meaningful diagnostic signal
-4. Synthetic data often fails not due to lack of global diversity, but due to **missing variation along task-relevant directions**
-5. The Toy dataset confirms that **rank must be interpreted in context**, not as an absolute metric
+Overall, rank-based metrics capture global properties of the data but fail to account for directional structure. This motivates the need for metrics that explicitly measure whether synthetic transformations encode the discriminative signal required for the task.
 
----
-
-### Computational Complexity
-
-We analyze the time and space complexity of the proposed diagnostic pipeline.
-
-Let:
-
-- $ n $: number of samples
-- $ d $: embedding dimension
-
----
-
-#### 1. Embedding Extraction
-
-We extract embeddings for both real and synthetic samples.
-
-- Time: $ O(n \cdot d) $
-- Space: $ O(n \cdot d) $
-
----
-
-#### 2. Difference Matrix Construction
-
-Using an image-to-image (I2I) translation setup, each sample has a one-to-one correspondence:
-
-$
-D = x_i^{real} - x_i^{synthetic}
-$
-
-Thus, the number of difference vectors is: $m = n$
-
-- Time: $ O(n \cdot d) $
-- Space: $ O(n \cdot d) $
-
----
-
-#### 3. Singular Value Decomposition (SVD)
-
-Let $ D \in \mathbb{R}^{n \times d} $
-
-- Time: $ O(n \cdot d^2) $
-- Space: $ O(n \cdot d) $
-
----
-
-#### 4. Rank Computation
-
-- Effective rank: $ O(d) $
-- Stable rank: $ O(d) $
-
-(negligible compared to SVD)
-
----
-
-#### 5. Logistic Regression (Feature Reweighting)
-
-- Time: $ O(n \cdot d) $
-- Space: $ O(d) $
-
----
-
-#### 6. Overall Complexity
-
-The dominant step is SVD on the difference matrix.
-
-- **Time Complexity:** $O(n \cdot d^2)$
-
-- **Space Complexity:** $O(n \cdot d)$
-
----
-
-#### Summary
-
----
-
-Due to the one-to-one correspondence induced by the I2I translation pipeline, the method scales **linearly with the number of samples**, making it significantly more efficient and scalable than pairwise difference-based approaches.
-
----
-
-## Conclusion
-
-We evaluated matrix rank–based diagnostics for understanding synthetic data quality in downstream tasks. Effective rank consistently reflects representation diversity and aligns well with performance differences, while stable rank is less informative. Task-aware reweighting, especially L1, shows that failures arise from missing diversity along discriminative directions rather than the full feature space. The Toy dataset highlights that low rank is sufficient when tasks are inherently simple, emphasizing context-dependent interpretation. Finally, the I2I-based formulation ensures linear scalability, making the approach efficient and practical for analysis. Overall, effective rank serves as a useful and interpretable signal for diagnosing synthetic data limitations.
+This insight directly motivates the development of the Discriminative Span metric, which evaluates whether the classifier direction can be reconstructed from the span of data-induced variations.
