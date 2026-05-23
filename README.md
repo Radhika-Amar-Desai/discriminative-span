@@ -98,7 +98,7 @@ We observe strong positive correlation for regularized estimators, particularly 
 ### CLIP Embedding Space
 
 <p align="center">
-  <img src="./plots/clip_correlation.png" width="750">
+  <img src="results_and_analysis/plots/clip_correlation.png" width="750">
 </p>
 
 ---
@@ -106,7 +106,7 @@ We observe strong positive correlation for regularized estimators, particularly 
 ### DINOv2 Embedding Space
 
 <p align="center">
-  <img src="./plots/dinov2_correlation.png" width="750">
+  <img src="results_and_analysis/plots/dinov2_correlation.png" width="750">
 </p>
 
 ---
@@ -114,7 +114,7 @@ We observe strong positive correlation for regularized estimators, particularly 
 ### ResNet-18 Embedding Space
 
 <p align="center">
-  <img src="./plots/resnet18_correlation.png" width="750">
+  <img src="results_and_analysis/plots/resnet18_correlation.png" width="750">
 </p>
 
 ---
