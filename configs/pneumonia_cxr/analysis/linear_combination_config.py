@@ -7,7 +7,7 @@ OUTPUT_DIR = r"C:\Users\97433\Knowing_the_difference\output"
 ridge_lambda = 0.01
 
 BASE_DATA_DIR = r'C:\Users\97433\Knowing_the_difference\data\embeddings\pneumonia_cxr'
-BASE_SYNTHETIC_DATA_DIR = os.path.join(BASE_DATA_DIR, 'synthetic_data')
+BASE_SYNTHETIC_DATA_DIR = os.path.join(BASE_DATA_DIR, 'augmented_mirror')
 RAW_REAL_DATA_DIR = os.path.join(BASE_DATA_DIR, 'real_data', 'raw')
 
 L1_SCALED_SYNTHETIC_DATA_DIR = os.path.join(BASE_SYNTHETIC_DATA_DIR, 'l1_scaled')

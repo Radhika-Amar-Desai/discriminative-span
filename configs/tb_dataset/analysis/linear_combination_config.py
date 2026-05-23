@@ -96,11 +96,11 @@ EMBEDDINGS = {
     # },
 
     "raw": {
-        # "resnet18": {
-        #     "real_A": os.path.join(BASE_REAL_DATA_DIR, 'raw', 'resnet18', CLASS_A),
-        #     "synthetic_B": os.path.join(RAW_SYNTHETIC_DATA_DIR, 'resnet18', CLASS_B),
-        #     "real_B": os.path.join(BASE_REAL_DATA_DIR, 'raw', 'resnet18', CLASS_B)
-        # },
+        "resnet18": {
+            "real_A": os.path.join(BASE_REAL_DATA_DIR, 'raw', 'resnet18', CLASS_A),
+            "synthetic_B": os.path.join(RAW_SYNTHETIC_DATA_DIR, 'resnet18', CLASS_B),
+            "real_B": os.path.join(BASE_REAL_DATA_DIR, 'raw', 'resnet18', CLASS_B)
+        },
 
         "clip": {
             "real_A": os.path.join(BASE_REAL_DATA_DIR, 'raw', 'clip', CLASS_A),
@@ -108,10 +108,10 @@ EMBEDDINGS = {
             "real_B": os.path.join(BASE_REAL_DATA_DIR, 'raw', 'clip', CLASS_B)
         },
 
-        # "dinov2": {
-        #     "real_A": os.path.join(BASE_REAL_DATA_DIR, 'raw', 'dinov2', CLASS_A),
-        #     "synthetic_B": os.path.join(RAW_SYNTHETIC_DATA_DIR, 'dinov2', CLASS_B),
-        #     "real_B": os.path.join(BASE_REAL_DATA_DIR, 'raw', 'dinov2', CLASS_B)
-        # }
+        "dinov2": {
+            "real_A": os.path.join(BASE_REAL_DATA_DIR, 'raw', 'dinov2', CLASS_A),
+            "synthetic_B": os.path.join(RAW_SYNTHETIC_DATA_DIR, 'dinov2', CLASS_B),
+            "real_B": os.path.join(BASE_REAL_DATA_DIR, 'raw', 'dinov2', CLASS_B)
+        }
     }
 }
