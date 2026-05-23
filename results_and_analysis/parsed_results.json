@@ -3,139 +3,135 @@
     "downstream_performance": [
       {
         "Model": "ResNet18",
-        "Train Acc": 0.9846,
-        "Train F1": 0.9848,
-        "Val Acc": 0.7500,
-        "Val F1 Score": 0.7500,
-        "Test Acc": 0.6138,
-        "Test F1": 0.5704
+        "Train Acc": 1.0,
+        "Train F1": 1.0,
+        "Val Acc": 0.75,
+        "Val F1 Score": 0.75,
+        "Test Acc": 0.649,
+        "Test F1": 0.6392
       },
       {
         "Model": "MobileNetV2",
-        "Train Acc": 1.0000,
-        "Train F1": 1.0000,
-        "Val Acc": 0.6250,
-        "Val F1 Score": 0.7273,
-        "Test Acc": 0.7676,
-        "Test F1": 0.7858
+        "Train Acc": 1.0,
+        "Train F1": 1.0,
+        "Test Acc": 0.508,
+        "Test F1": 0.4547
       },
       {
         "Model": "EfficientNetB0",
-        "Train Acc": 0.6875,
-        "Train F1": 0.7059,
-        "Val Acc": 1.0000,
-        "Val F1 Score": 1.0000,
-        "Test Acc": 0.6490,
-        "Test F1": 0.6231
+        "Train Acc": 1.0,
+        "Train F1": 1.0,
+        "Test Acc": 0.6058,
+        "Test F1": 0.5895
       }
     ],
     "diagnostic_metrics": [
       {
         "Embedding Model": "resnet18",
         "Solver": "Least Squares",
-        "Effective Rank": 182,
-        "Relative Error": 0.754,
-        "Explained Fraction": 0.246,
-        "Number of Pairs": 259,
+        "Effective Rank": 298,
+        "Relative Error": 2.6237323425127287e-09,
+        "Explained Fraction": 0.9999999973762677,
+        "Number of Pairs": 1036,
         "Dim": 512
       },
       {
         "Embedding Model": "resnet18",
         "Solver": "Ridge",
-        "Effective Rank": 182,
-        "Relative Error": 0.8389,
-        "Explained Fraction": 0.1611,
-        "Number of Pairs": 259,
+        "Effective Rank": 298,
+        "Relative Error": 0.6201951124403662,
+        "Explained Fraction": 0.3798048875596338,
+        "Number of Pairs": 1036,
         "Dim": 512
       },
       {
         "Embedding Model": "resnet18",
         "Solver": "NNLS",
-        "Effective Rank": 182,
-        "Relative Error": 0.9756,
-        "Explained Fraction": 0.0244,
-        "Number of Pairs": 259,
+        "Effective Rank": 298,
+        "Relative Error": 0.9584392846438115,
+        "Explained Fraction": 0.04156071535618855,
+        "Number of Pairs": 1036,
         "Dim": 512
       },
       {
         "Embedding Model": "resnet18",
         "Solver": "L1",
-        "Effective Rank": 182,
-        "Relative Error": 0.9089,
-        "Explained Fraction": 0.0911,
-        "Number of Pairs": 259,
+        "Effective Rank": 298,
+        "Relative Error": 0.9515152192583852,
+        "Explained Fraction": 0.048484780741614775,
+        "Number of Pairs": 1036,
         "Dim": 512
       },
       {
         "Embedding Model": "clip",
         "Solver": "Least Squares",
-        "Effective Rank": 145,
-        "Relative Error": 0.7341,
-        "Explained Fraction": 0.2659,
-        "Number of Pairs": 259,
+        "Effective Rank": 246,
+        "Relative Error": 2.361912786883642e-09,
+        "Explained Fraction": 0.9999999976380872,
+        "Number of Pairs": 1036,
         "Dim": 512
       },
       {
         "Embedding Model": "clip",
         "Solver": "Ridge",
-        "Effective Rank": 145,
-        "Relative Error": 0.8966,
-        "Explained Fraction": 0.1034,
-        "Number of Pairs": 259,
+        "Effective Rank": 246,
+        "Relative Error": 0.7860443492895083,
+        "Explained Fraction": 0.21395565071049172,
+        "Number of Pairs": 1036,
         "Dim": 512
       },
       {
         "Embedding Model": "clip",
         "Solver": "NNLS",
-        "Effective Rank": 145,
-        "Relative Error": 0.9903,
-        "Explained Fraction": 0.0097,
-        "Number of Pairs": 259,
+        "Effective Rank": 246,
+        "Relative Error": 0.9824410335519318,
+        "Explained Fraction": 0.017558966448068203,
+        "Number of Pairs": 1036,
         "Dim": 512
       },
       {
         "Embedding Model": "clip",
         "Solver": "L1",
-        "Effective Rank": 145,
-        "Relative Error": 0.9622,
-        "Explained Fraction": 0.0378,
-        "Number of Pairs": 259,
+        "Effective Rank": 246,
+        "Relative Error": 0.9999999990763999,
+        "Explained Fraction": 9.236000853007909e-10,
+        "Number of Pairs": 1036,
         "Dim": 512
       },
       {
         "Embedding Model": "dinov2",
         "Solver": "Least Squares",
-        "Effective Rank": 151,
-        "Relative Error": 0.5943,
-        "Explained Fraction": 0.4057,
-        "Number of Pairs": 259,
+        "Effective Rank": 232,
+        "Relative Error": 1.9765387219985903e-09,
+        "Explained Fraction": 0.9999999980234613,
+        "Number of Pairs": 1036,
         "Dim": 384
       },
       {
         "Embedding Model": "dinov2",
         "Solver": "Ridge",
-        "Effective Rank": 151,
-        "Relative Error": 0.8221,
-        "Explained Fraction": 0.1779,
-        "Number of Pairs": 259,
+        "Effective Rank": 232,
+        "Relative Error": 0.6886829371609311,
+        "Explained Fraction": 0.3113170628390689,
+        "Number of Pairs": 1036,
         "Dim": 384
       },
       {
         "Embedding Model": "dinov2",
         "Solver": "NNLS",
-        "Effective Rank": 151,
-        "Relative Error": 0.9879,
-        "Explained Fraction": 0.0121,
-        "Number of Pairs": 259,
+        "Effective Rank": 232,
+        "Relative Error": 0.9720684385639637,
+        "Explained Fraction": 0.027931561436036256,
+        "Number of Pairs": 1036,
         "Dim": 384
       },
       {
         "Embedding Model": "dinov2",
         "Solver": "L1",
-        "Effective Rank": 151,
-        "Relative Error": 0.8939,
-        "Explained Fraction": 0.1061,
-        "Number of Pairs": 259,
+        "Effective Rank": 232,
+        "Relative Error": 0.7891670887387986,
+        "Explained Fraction": 0.2108329112612014,
+        "Number of Pairs": 1036,
         "Dim": 384
       }
     ]
@@ -144,138 +140,132 @@
     "downstream_performance": [
       {
         "Model": "ResNet18",
-        "Train Acc": 0.9787,
-        "Train F1": 0.9787,
-        "Val Acc": 0.95,
-        "Val F1": 0.9474,
-        "Test Acc": 0.9302,
-        "Test F1": 0.9302
-      },
-      {
-        "Model": "EfficientNetB0",
-        "Train Acc": 0.9460,
-        "Train F1": 0.9448,
-        "Val Acc": 1.0,
-        "Val F1": 1.0,
-        "Test Acc": 0.8953,
-        "Test F1": 0.8889
+        "Train Acc": 1.0,
+        "Train F1": 1.0,
+        "Test Acc": 0.9767,
+        "Test F1": 0.9767
       },
       {
         "Model": "MobileNetV2",
-        "Train Acc": 0.9702,
-        "Train F1": 0.9698,
-        "Val Acc": 0.9500,
-        "Val F1": 0.9474,
-        "Test Acc": 0.9070,
-        "Test F1": 0.9024
+        "Train Acc": 1.0,
+        "Train F1": 1.0,
+        "Test Acc": 0.9535,
+        "Test F1": 0.9535
+      },
+      {
+        "Model": "EfficientNetB0",
+        "Train Acc": 1.0,
+        "Train F1": 1.0,
+        "Test Acc": 0.6744,
+        "Test F1": 0.6977
       }
     ],
-    "diagnostic_metrics": [
+    "diagnostic_metrics":  [
       {
         "Embedding Model": "resnet18",
         "Solver": "Least Squares",
-        "Effective Rank": 203,
-        "Relative Error": 0.34136,
-        "Explained Fraction": 0.6586,
+        "Effective Rank": 176,
+        "Relative Error": 0.36603315857783564,
+        "Explained Fraction": 0.6339668414221644,
         "Number of Pairs": 352,
         "Dim": 512
       },
       {
         "Embedding Model": "resnet18",
         "Solver": "Ridge",
-        "Effective Rank": 203,
-        "Relative Error": 0.463288,
-        "Explained Fraction": 0.5367,
+        "Effective Rank": 176,
+        "Relative Error": 0.5375484257089742,
+        "Explained Fraction": 0.4624515742910258,
         "Number of Pairs": 352,
         "Dim": 512
       },
       {
         "Embedding Model": "resnet18",
         "Solver": "NNLS",
-        "Effective Rank": 203,
-        "Relative Error": 0.687487,
-        "Explained Fraction": 0.3125,
+        "Effective Rank": 176,
+        "Relative Error": 0.735076417156761,
+        "Explained Fraction": 0.264923582843239,
         "Number of Pairs": 352,
         "Dim": 512
       },
       {
         "Embedding Model": "resnet18",
         "Solver": "L1",
-        "Effective Rank": 203,
-        "Relative Error": 0.783373,
-        "Explained Fraction": 0.2166,
+        "Effective Rank": 176,
+        "Relative Error": 0.8587736789340049,
+        "Explained Fraction": 0.1412263210659951,
         "Number of Pairs": 352,
         "Dim": 512
       },
       {
         "Embedding Model": "clip",
         "Solver": "Least Squares",
-        "Effective Rank": 200,
-        "Relative Error": 0.206622,
-        "Explained Fraction": 0.7934,
+        "Effective Rank": 191,
+        "Relative Error": 0.2679928474126343,
+        "Explained Fraction": 0.7320071525873657,
         "Number of Pairs": 352,
         "Dim": 512
       },
       {
         "Embedding Model": "clip",
         "Solver": "Ridge",
-        "Effective Rank": 200,
-        "Relative Error": 0.319543,
-        "Explained Fraction": 0.6805,
+        "Effective Rank": 191,
+        "Relative Error": 0.36531079055496624,
+        "Explained Fraction": 0.6346892094450338,
         "Number of Pairs": 352,
         "Dim": 512
       },
       {
         "Embedding Model": "clip",
         "Solver": "NNLS",
-        "Effective Rank": 200,
-        "Relative Error": 0.557877,
-        "Explained Fraction": 0.4421,
+        "Effective Rank": 191,
+        "Relative Error": 0.5579115113240335,
+        "Explained Fraction": 0.4420884886759665,
         "Number of Pairs": 352,
         "Dim": 512
       },
       {
         "Embedding Model": "clip",
         "Solver": "L1",
-        "Effective Rank": 200,
-        "Relative Error": 0.684727,
-        "Explained Fraction": 0.3153,
+        "Effective Rank": 191,
+        "Relative Error": 0.9999999914310724,
+        "Explained Fraction": 8.568927567509377e-9,
         "Number of Pairs": 352,
         "Dim": 512
       },
       {
         "Embedding Model": "dinov2",
         "Solver": "Least Squares",
-        "Effective Rank": 190,
-        "Relative Error": 0.121814,
-        "Explained Fraction": 0.8782,
+        "Effective Rank": 187,
+        "Relative Error": 0.15606250367437516,
+        "Explained Fraction": 0.8439374963256249,
         "Number of Pairs": 352,
         "Dim": 384
       },
       {
         "Embedding Model": "dinov2",
         "Solver": "Ridge",
-        "Effective Rank": 190,
-        "Relative Error": 0.356713,
-        "Explained Fraction": 0.6433,
+        "Effective Rank": 187,
+        "Relative Error": 0.3597283143616712,
+        "Explained Fraction": 0.6402716856383288,
         "Number of Pairs": 352,
         "Dim": 384
       },
       {
         "Embedding Model": "dinov2",
         "Solver": "NNLS",
-        "Effective Rank": 190,
-        "Relative Error": 0.64572,
-        "Explained Fraction": 0.3543,
+        "Effective Rank": 187,
+        "Relative Error": 0.637439212392329,
+        "Explained Fraction": 0.36256078760767096,
         "Number of Pairs": 352,
         "Dim": 384
       },
       {
         "Embedding Model": "dinov2",
         "Solver": "L1",
-        "Effective Rank": 190,
-        "Relative Error": 0.699646,
-        "Explained Fraction": 0.3004,
+        "Effective Rank": 187,
+        "Relative Error": 0.662434256311829,
+        "Explained Fraction": 0.33756574368817105,
         "Number of Pairs": 352,
         "Dim": 384
       }
@@ -285,138 +275,132 @@
     "downstream_performance": [
       {
         "Model": "ResNet18",
-        "Train Acc": 0.9969,
-        "Train F1": 0.9969,
-        "Val Acc": 1.0,
-        "Val F1": 1.0,
-        "Test Acc": 1.0,
-        "Test F1": 1.0
+        "Train Acc": 1.0,
+        "Train F1": 1.0,
+        "Test Acc": 0.9889,
+        "Test F1": 0.9889
       },
       {
         "Model": "MobileNetV2",
         "Train Acc": 1.0,
         "Train F1": 1.0,
-        "Val Acc": 1.0,
-        "Val F1": 1.0,
-        "Test Acc": 0.9778,
-        "Test F1": 0.9778
+        "Test Acc": 0.9667,
+        "Test F1": 0.9668
       },
       {
         "Model": "EfficientNetB0",
-        "Train Acc": 0.9979,
-        "Train F1": 0.9979,
-        "Val Acc": 1.0,
-        "Val F1": 1.0,
-        "Test Acc": 1.0,
-        "Test F1": 1.0
+        "Train Acc": 1.0,
+        "Train F1": 1.0,
+        "Test Acc": 0.9556,
+        "Test F1": 0.9557
       }
     ],
-    "diagnostic_metrics": [
+    "diagnostic_metrics":  [
       {
         "Embedding Model": "resnet18",
         "Solver": "Least Squares",
-        "Effective Rank": 288,
-        "Relative Error": 0.102834,
-        "Explained Fraction": 0.8972,
+        "Effective Rank": 265,
+        "Relative Error": 0.157046602320099,
+        "Explained Fraction": 0.842953397679901,
         "Number of Pairs": 485,
         "Dim": 512
       },
       {
         "Embedding Model": "resnet18",
         "Solver": "Ridge",
-        "Effective Rank": 288,
-        "Relative Error": 0.356454,
-        "Explained Fraction": 0.6435,
+        "Effective Rank": 265,
+        "Relative Error": 0.45122398875843767,
+        "Explained Fraction": 0.5487760112415623,
         "Number of Pairs": 485,
         "Dim": 512
       },
       {
         "Embedding Model": "resnet18",
         "Solver": "NNLS",
-        "Effective Rank": 288,
-        "Relative Error": 0.711918,
-        "Explained Fraction": 0.2881,
+        "Effective Rank": 265,
+        "Relative Error": 0.7648221420277646,
+        "Explained Fraction": 0.23517785797223545,
         "Number of Pairs": 485,
         "Dim": 512
       },
       {
         "Embedding Model": "resnet18",
         "Solver": "L1",
-        "Effective Rank": 288,
-        "Relative Error": 0.726766,
-        "Explained Fraction": 0.2732,
+        "Effective Rank": 265,
+        "Relative Error": 0.8146124563633289,
+        "Explained Fraction": 0.1853875436366711,
         "Number of Pairs": 485,
         "Dim": 512
       },
       {
         "Embedding Model": "clip",
         "Solver": "Least Squares",
-        "Effective Rank": 263,
-        "Relative Error": 0.0817881,
-        "Explained Fraction": 0.9182,
+        "Effective Rank": 239,
+        "Relative Error": 0.11733945491464147,
+        "Explained Fraction": 0.8826605450853585,
         "Number of Pairs": 485,
         "Dim": 512
       },
       {
         "Embedding Model": "clip",
         "Solver": "Ridge",
-        "Effective Rank": 263,
-        "Relative Error": 0.262815,
-        "Explained Fraction": 0.7372,
+        "Effective Rank": 239,
+        "Relative Error": 0.34767609929144305,
+        "Explained Fraction": 0.652323900708557,
         "Number of Pairs": 485,
         "Dim": 512
       },
       {
         "Embedding Model": "clip",
         "Solver": "NNLS",
-        "Effective Rank": 263,
-        "Relative Error": 0.473162,
-        "Explained Fraction": 0.5268,
+        "Effective Rank": 239,
+        "Relative Error": 0.5678350606287639,
+        "Explained Fraction": 0.4321649393712361,
         "Number of Pairs": 485,
         "Dim": 512
       },
       {
         "Embedding Model": "clip",
         "Solver": "L1",
-        "Effective Rank": 263,
-        "Relative Error": 0.5661,
-        "Explained Fraction": 0.4339,
+        "Effective Rank": 239,
+        "Relative Error": 0.8797214008450918,
+        "Explained Fraction": 0.12027859915490824,
         "Number of Pairs": 485,
         "Dim": 512
       },
       {
         "Embedding Model": "dinov2",
         "Solver": "Least Squares",
-        "Effective Rank": 250,
-        "Relative Error": 2230000000.0,
-        "Explained Fraction": 1,
+        "Effective Rank": 249,
+        "Relative Error": 3.593011318004228e-09,
+        "Explained Fraction": 0.9999999964069887,
         "Number of Pairs": 485,
         "Dim": 384
       },
       {
         "Embedding Model": "dinov2",
         "Solver": "Ridge",
-        "Effective Rank": 250,
-        "Relative Error": 0.31784,
-        "Explained Fraction": 0.6822,
+        "Effective Rank": 249,
+        "Relative Error": 0.3630483390606489,
+        "Explained Fraction": 0.6369516609393511,
         "Number of Pairs": 485,
         "Dim": 384
       },
       {
         "Embedding Model": "dinov2",
         "Solver": "NNLS",
-        "Effective Rank": 250,
-        "Relative Error": 0.547462,
-        "Explained Fraction": 0.4525,
+        "Effective Rank": 249,
+        "Relative Error": 0.5712764475133082,
+        "Explained Fraction": 0.4287235524866918,
         "Number of Pairs": 485,
         "Dim": 384
       },
       {
         "Embedding Model": "dinov2",
         "Solver": "L1",
-        "Effective Rank": 250,
-        "Relative Error": 0.640865,
-        "Explained Fraction": 0.3591,
+        "Effective Rank": 249,
+        "Relative Error": 0.5549093580283664,
+        "Explained Fraction": 0.4450906419716336,
         "Number of Pairs": 485,
         "Dim": 384
       }
@@ -426,51 +410,60 @@
     "downstream_performance": [
       {
         "Model": "ResNet18",
-        "Train Acc": 0.8071,
-        "Train F1": 0.8278,
-        "Test Acc": 0.8375,
-        "Test F1": 0.866
+        "Train Acc": 1.0,
+        "Train F1": 1.0,
+        "Test Acc": 0.975,
+        "Test F1": 0.9751
       },
       {
         "Model": "MobileNetV2",
-        "Train Acc": 0.9893,
-        "Train F1": 0.9892,
-        "Test Acc": 0.9042,
-        "Test F1": 0.9098
+        "Train Acc": 1.0,
+        "Train F1": 1.0,
+        "Test Acc": 0.9792,
+        "Test F1": 0.9812
       },
       {
         "Model": "EfficientNetB0",
-        "Train Acc": 0.9841,
-        "Train F1": 0.9843,
-        "Test Acc": 0.9250,
-        "Test F1": 0.9302
+        "Train Acc": 1.0,
+        "Train F1": 1.0,
+        "Test Acc": 0.9542,
+        "Test F1": 0.9543
       }
     ],
-    "diagnostic_metrics": [
+    "diagnostic_metrics":  [
       {
         "Embedding Model": "resnet18",
         "Solver": "Least Squares",
-        "Effective Rank": 343,
-        "Relative Error": 2060000000.0,
-        "Explained Fraction": 1,
+        "Effective Rank": 320,
+        "Relative Error": 1.8898859395463523e-09,
+        "Explained Fraction": 0.9999999981101141,
         "Number of Pairs": 1117,
         "Dim": 512
       },
       {
         "Embedding Model": "resnet18",
         "Solver": "Ridge",
-        "Effective Rank": 343,
-        "Relative Error": 0.417489,
-        "Explained Fraction": 0.5825,
+        "Effective Rank": 320,
+        "Relative Error": 0.4244394362586458,
+        "Explained Fraction": 0.5755605637413542,
         "Number of Pairs": 1117,
         "Dim": 512
       },
       {
         "Embedding Model": "resnet18",
         "Solver": "NNLS",
-        "Effective Rank": 343,
-        "Relative Error": 0.983051,
-        "Explained Fraction": 0.0169,
+        "Effective Rank": 320,
+        "Relative Error": 0.7762850662987797,
+        "Explained Fraction": 0.2237149337012203,
+        "Number of Pairs": 1117,
+        "Dim": 512
+      },
+      {
+        "Embedding Model": "resnet18",
+        "Solver": "L1",
+        "Effective Rank": 320,
+        "Relative Error": 0.8096077627252848,
+        "Explained Fraction": 0.19039223727471521,
         "Number of Pairs": 1117,
         "Dim": 512
       },
@@ -478,8 +471,8 @@
         "Embedding Model": "clip",
         "Solver": "Least Squares",
         "Effective Rank": 307,
-        "Relative Error": 1680000000.0,
-        "Explained Fraction": 1,
+        "Relative Error": 9.362278758136553e-10,
+        "Explained Fraction": 0.9999999990637721,
         "Number of Pairs": 1117,
         "Dim": 512
       },
@@ -487,8 +480,8 @@
         "Embedding Model": "clip",
         "Solver": "Ridge",
         "Effective Rank": 307,
-        "Relative Error": 0.380944,
-        "Explained Fraction": 0.6191,
+        "Relative Error": 0.28543308325672057,
+        "Explained Fraction": 0.7145669167432794,
         "Number of Pairs": 1117,
         "Dim": 512
       },
@@ -496,35 +489,53 @@
         "Embedding Model": "clip",
         "Solver": "NNLS",
         "Effective Rank": 307,
-        "Relative Error": 0.946506,
-        "Explained Fraction": 0.0535,
+        "Relative Error": 0.6720697072260828,
+        "Explained Fraction": 0.32793029277391716,
+        "Number of Pairs": 1117,
+        "Dim": 512
+      },
+      {
+        "Embedding Model": "clip",
+        "Solver": "L1",
+        "Effective Rank": 307,
+        "Relative Error": 0.8621914999285538,
+        "Explained Fraction": 0.13780850007144618,
         "Number of Pairs": 1117,
         "Dim": 512
       },
       {
         "Embedding Model": "dinov2",
         "Solver": "Least Squares",
-        "Effective Rank": 283,
-        "Relative Error": 95500000000.0,
-        "Explained Fraction": 1,
+        "Effective Rank": 263,
+        "Relative Error": 7.239299916862352e-10,
+        "Explained Fraction": 0.99999999927607,
         "Number of Pairs": 1117,
         "Dim": 384
       },
       {
         "Embedding Model": "dinov2",
         "Solver": "Ridge",
-        "Effective Rank": 283,
-        "Relative Error": 0.329001,
-        "Explained Fraction": 0.671,
+        "Effective Rank": 263,
+        "Relative Error": 0.32053355976987197,
+        "Explained Fraction": 0.679466440230128,
         "Number of Pairs": 1117,
         "Dim": 384
       },
       {
         "Embedding Model": "dinov2",
         "Solver": "NNLS",
-        "Effective Rank": 283,
-        "Relative Error": 0.940155,
-        "Explained Fraction": 0.0598,
+        "Effective Rank": 263,
+        "Relative Error": 0.6504287080436882,
+        "Explained Fraction": 0.34957129195631176,
+        "Number of Pairs": 1117,
+        "Dim": 384
+      },
+      {
+        "Embedding Model": "dinov2",
+        "Solver": "L1",
+        "Effective Rank": 263,
+        "Relative Error": 0.6061360765277833,
+        "Explained Fraction": 0.39386392347221666,
         "Number of Pairs": 1117,
         "Dim": 384
       }
@@ -534,138 +545,132 @@
     "downstream_performance": [
       {
         "Model": "ResNet18",
-        "Train Acc": 0.9583,
-        "Train F1": 0.9596,
-        "Test Acc": 0.9372,
-        "Test F1": 0.9366,
-        "Val Acc": 1.0,
-        "Val F1": 1.0
+        "Train Acc": 1.0,
+        "Train F1": 1.0,
+        "Test Acc": 0.8603,
+        "Test F1": 0.8571
       },
       {
         "Model": "MobileNetV2",
-        "Train Acc": 0.9774,
-        "Train F1": 0.9778,
-        "Test Acc": 0.9170,
-        "Test F1": 0.9165,
-        "Val Acc": 1.0,
-        "Val F1": 1.0
+        "Train Acc": 1.0,
+        "Train F1": 1.0,
+        "Test Acc": 0.7166,
+        "Test F1": 0.6911
       },
       {
         "Model": "EfficientNetB0",
-        "Train Acc": 0.9869,
-        "Train F1": 0.9871,
-        "Test Acc": 0.9291,
-        "Test F1": 0.9275,
-        "Val Acc": 1.0,
-        "Val F1": 1.0
+        "Train Acc": 1.0,
+        "Train F1": 1.0,
+        "Test Acc": 0.7915,
+        "Test F1": 0.7856
       }
     ],
-    "diagnostic_metrics": [
+    "diagnostic_metrics":  [
       {
         "Embedding Model": "resnet18",
         "Solver": "Least Squares",
-        "Effective Rank": 351,
-        "Relative Error": 1210000000.0,
-        "Explained Fraction": 1,
+        "Effective Rank": 327,
+        "Relative Error": 2.0095610267036043e-09,
+        "Explained Fraction": 0.9999999979904389,
         "Number of Pairs": 995,
         "Dim": 512
       },
       {
         "Embedding Model": "resnet18",
         "Solver": "Ridge",
-        "Effective Rank": 351,
-        "Relative Error": 0.375139,
-        "Explained Fraction": 0.6249,
+        "Effective Rank": 327,
+        "Relative Error": 0.43695894460637147,
+        "Explained Fraction": 0.5630410553936285,
         "Number of Pairs": 995,
         "Dim": 512
       },
       {
         "Embedding Model": "resnet18",
         "Solver": "NNLS",
-        "Effective Rank": 351,
-        "Relative Error": 0.679303,
-        "Explained Fraction": 0.3207,
+        "Effective Rank": 327,
+        "Relative Error": 0.6902700000590823,
+        "Explained Fraction": 0.30972999994091766,
         "Number of Pairs": 995,
         "Dim": 512
       },
       {
         "Embedding Model": "resnet18",
         "Solver": "L1",
-        "Effective Rank": 351,
-        "Relative Error": 0.663738,
-        "Explained Fraction": 0.3363,
+        "Effective Rank": 327,
+        "Relative Error": 0.738434918821526,
+        "Explained Fraction": 0.261565081178474,
         "Number of Pairs": 995,
         "Dim": 512
       },
       {
         "Embedding Model": "clip",
         "Solver": "Least Squares",
-        "Effective Rank": 329,
-        "Relative Error": 79800000000.0,
-        "Explained Fraction": 1,
+        "Effective Rank": 318,
+        "Relative Error": 1.108129121460639e-09,
+        "Explained Fraction": 0.9999999988918709,
         "Number of Pairs": 995,
         "Dim": 512
       },
       {
         "Embedding Model": "clip",
         "Solver": "Ridge",
-        "Effective Rank": 329,
-        "Relative Error": 0.290121,
-        "Explained Fraction": 0.7099,
+        "Effective Rank": 318,
+        "Relative Error": 0.3350053344757474,
+        "Explained Fraction": 0.6649946655242527,
         "Number of Pairs": 995,
         "Dim": 512
       },
       {
         "Embedding Model": "clip",
         "Solver": "NNLS",
-        "Effective Rank": 329,
-        "Relative Error": 0.686178,
-        "Explained Fraction": 0.3138,
+        "Effective Rank": 318,
+        "Relative Error": 0.6911449309639959,
+        "Explained Fraction": 0.3088550690360041,
         "Number of Pairs": 995,
         "Dim": 512
       },
       {
         "Embedding Model": "clip",
         "Solver": "L1",
-        "Effective Rank": 329,
-        "Relative Error": 0.695665,
-        "Explained Fraction": 0.3043,
+        "Effective Rank": 318,
+        "Relative Error": 0.8474433572541323,
+        "Explained Fraction": 0.15255664274586767,
         "Number of Pairs": 995,
         "Dim": 512
       },
       {
         "Embedding Model": "dinov2",
         "Solver": "Least Squares",
-        "Effective Rank": 268,
-        "Relative Error": 90500000000.0,
-        "Explained Fraction": 1,
+        "Effective Rank": 267,
+        "Relative Error": 1.1428081301689773e-09,
+        "Explained Fraction": 0.9999999988571918,
         "Number of Pairs": 995,
         "Dim": 384
       },
       {
         "Embedding Model": "dinov2",
         "Solver": "Ridge",
-        "Effective Rank": 268,
-        "Relative Error": 0.413526,
-        "Explained Fraction": 0.5865,
+        "Effective Rank": 267,
+        "Relative Error": 0.42152351720050923,
+        "Explained Fraction": 0.5784764827994908,
         "Number of Pairs": 995,
         "Dim": 384
       },
       {
         "Embedding Model": "dinov2",
         "Solver": "NNLS",
-        "Effective Rank": 268,
-        "Relative Error": 0.790725,
-        "Explained Fraction": 0.2093,
+        "Effective Rank": 267,
+        "Relative Error": 0.7899174303443531,
+        "Explained Fraction": 0.21008256965564687,
         "Number of Pairs": 995,
         "Dim": 384
       },
       {
         "Embedding Model": "dinov2",
         "Solver": "L1",
-        "Effective Rank": 268,
-        "Relative Error": 0.693928,
-        "Explained Fraction": 0.3061,
+        "Effective Rank": 267,
+        "Relative Error": 0.5689642574266416,
+        "Explained Fraction": 0.4310357425733584,
         "Number of Pairs": 995,
         "Dim": 384
       }
