@@ -215,31 +215,29 @@ ax.text(
 # FORMULA BOX
 # =========================================================
 
-formula_text = (
-    r'$\mathrm{Relative\ Projection\ Error}$'
-    '\n\n'
-    r'$='
-    r'\frac{\|\mathbf{w}-\Pi_{\mathrm{span}(D)}(\mathbf{w})\|}'
-    r'{\|\mathbf{w}\|}$'
-    '\n\n'
-    f'$= {relative_error:.3f}$'
-)
+# formula_text = (
+#     r'$\mathrm{Relative\ Projection\ Error}$'
+#     '\n\n'
+#     r'$='
+#     r'\frac{\|\mathbf{w}-\Pi_{\mathrm{span}(D)}(\mathbf{w})\|}'
+#     r'{\|\mathbf{w}\|}$'
+# )
 
-fig.text(
-    0.80,
-    0.33,
+# fig.text(
+#     0.80,
+#     0.33,
 
-    formula_text,
+#     formula_text,
 
-    fontsize=15,
+#     fontsize=15,
 
-    bbox=dict(
-        facecolor='white',
-        alpha=0.96,
-        edgecolor='gray',
-        pad=14
-    )
-)
+#     bbox=dict(
+#         facecolor='white',
+#         alpha=0.96,
+#         edgecolor='gray',
+#         pad=14
+#     )
+# )
 
 # =========================================================
 # AXES LABELS

@@ -621,50 +621,56 @@ ax2.text(
 # FORMULA + DESCRIPTION
 # =========================================================
 
-formula = (
-    r'$\mathrm{RPE}'
-    r'='
-    r'\frac{\|\mathbf{w}-\Pi_{\mathrm{span}(D)}(\mathbf{w})\|}'
-    r'{\|\mathbf{w}\|}$'
-)
+# formula = (
+#     r'$\mathrm{RPE}'
+#     r'='
+#     r'\frac{\|\mathbf{w}-\Pi_{\mathrm{span}(D)}(\mathbf{w})\|}'
+#     r'{\|\mathbf{w}\|}$'
+# )
 
-ax2.text(
-    3.35,
-    2.45,
+# formula = (
+#     r'$\mathrm{DS}'
+#     r'\;=\;'
+#     r'\mathbf{1 - RPE}$'
+# )
 
-    formula,
+# ax2.text(
+#     3.35,
+#     2.45,
 
-    fontsize=23,
-    ha='center'
-)
+#     formula,
 
-description = (
-    'Measures the fraction of the classifier\n'
-    'discriminative direction unexplained\n'
-    'by synthetic transformations.'
-)
+#     fontsize=23,
+#     ha='center'
+# )
 
-ax2.text(
-    3.35,
-    1.45,
+# description = (
+#     'Measures the fraction of the classifier\n'
+#     'discriminative direction unexplained\n'
+#     'by synthetic transformations.'
+# )
 
-    description,
+# ax2.text(
+#     3.35,
+#     1.45,
 
-    fontsize=11.5,
-    ha='center',
-    color='dimgray'
-)
+#     description,
 
-# =========================================================
-# PANEL TITLE
-# =========================================================
+#     fontsize=11.5,
+#     ha='center',
+#     color='dimgray'
+# )
 
-ax2.set_title(
-    '(b) Orthogonal Projection-Based Diagnostic',
+# # =========================================================
+# # PANEL TITLE
+# # =========================================================
 
-    fontsize=16,
-    pad=10
-)
+# ax2.set_title(
+#     '(b) Orthogonal Projection-Based Diagnostic',
+
+#     fontsize=16,
+#     pad=10
+# )
 
 # =========================================================
 # GLOBAL TITLE

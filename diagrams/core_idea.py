@@ -531,7 +531,7 @@ ax.set_zlabel(
 
 ax.set_title(
     'Embedding Space Geometry:\n'
-    'Difference Vector Span and Linear Classifier',
+    'Difference Vectors and Linear Classifier',
     fontsize=19,
     pad=28
 )
