@@ -1,6 +1,6 @@
 import os
 
-DATASET_NAME = "pneumonia_experiment"
+DATASET_NAME = "pneumonia_cxr"
 
 OUTPUT_DIR = r"C:\Users\97433\Knowing_the_difference\output"
 

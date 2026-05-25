@@ -1,6 +1,6 @@
 import os
 
-DATASET_NAME = "skin_lesion_experiment"
+DATASET_NAME = "horses_and_zebra"
 
 OUTPUT_DIR = r"C:\Users\97433\Knowing_the_difference\output"
 
