@@ -7,7 +7,7 @@ Official implementation for the paper:
 
 ---
 
-## Introduction
+## 🚀 Introduction
 
 Synthetic data is widely used to address data scarcity in computer vision, particularly in domains such as medical imaging and industrial inspection. However, evaluating whether synthetic data will actually improve downstream model performance remains a major challenge.
 
@@ -69,7 +69,11 @@ DS = 1 - RPE
 
 High Discriminative Span indicates that synthetic transformations capture task-relevant directions in embedding space.
 
-![Discriminative Span Pipeline Diagram](/diagrams/final_pipeline.png)
+---
+
+## 🧭 Framework Overview
+
+<p align="center"> <img src="/diagrams/final_pipeline.png" width="950"> </p> <p align="center"> <em> Overview of the proposed Discriminative Span framework. Synthetic samples are projected into embedding space, where induced transformation vectors are analyzed to determine whether they span the downstream discriminative direction. </em> </p>
 
 ---
 
@@ -89,7 +93,7 @@ Our results suggest:
 
 ---
 
-## Correlation Between Discriminative Span and Test Performance
+## 📈 Correlation Between Discriminative Span and Test Performance
 
 The following plots show the relationship between **Discriminative Span** and downstream **Test F1 Score** across different embedding spaces.
 
@@ -182,7 +186,7 @@ pip install -r requirements.txt
 
 ---
 
-# 🚀 Running The Experiments
+## 🚀 Running The Experiments
 
 ## 1. Generate Embeddings
 
@@ -328,7 +332,7 @@ for making this work possible.
 
 ---
 
-## References
+## 📄 References
 
 This repository builds upon ideas from:
 - representation learning,
