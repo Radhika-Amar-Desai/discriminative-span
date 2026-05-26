@@ -69,10 +69,6 @@ DS = 1 - RPE
 
 High Discriminative Span indicates that synthetic transformations capture task-relevant directions in embedding space.
 
----
-
-### Method Pipeline
-
 ![Discriminative Span Pipeline Diagram](/diagrams/final_pipeline.png)
 
 ---
