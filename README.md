@@ -31,7 +31,7 @@ To study this, we introduce **Discriminative Span (DS)** — a geometry-driven m
 
 ---
 
-## Key Idea
+## 🧠 Key Idea
 
 Given paired real and synthetic samples:
 
@@ -71,7 +71,13 @@ High Discriminative Span indicates that synthetic transformations capture task-r
 
 ---
 
-## Main Findings
+### Method Pipeline
+
+![Discriminative Span Pipeline Diagram](./diagrams/final_pipeline.png)
+
+---
+
+## 📊 Main Findings
 
 Our experiments reveal several key insights:
 
@@ -150,7 +156,7 @@ This provides:
 
 ---
 
-## Installation
+## ⚙️ Installation
 
 Create a virtual environment:
 
@@ -180,7 +186,7 @@ pip install -r requirements.txt
 
 ---
 
-# Running The Experiments
+# 🚀 Running The Experiments
 
 ## 1. Generate Embeddings
 
@@ -241,7 +247,7 @@ Current embedding extraction support includes:
 
 ---
 
-## Experimental Datasets
+## 🧪 Experimental Datasets
 
 The paper evaluates the framework across multiple datasets:
 
@@ -253,7 +259,7 @@ The paper evaluates the framework across multiple datasets:
 
 ---
 
-## Important Observations
+## 💡 Important Observations
 
 ### 1. Diversity Alone Is Not Enough
 
@@ -285,7 +291,7 @@ Ridge regression consistently provides more stable and meaningful estimates.
 
 ---
 
-## Future Directions
+## 🔮 Future Directions
 
 Potential future extensions include:
 
@@ -297,7 +303,7 @@ Potential future extensions include:
 
 ---
 
-## Citation
+## 📚 Citation
 
 If you find this work useful, please consider citing:
 
@@ -312,7 +318,7 @@ If you find this work useful, please consider citing:
 
 ---
 
-## Acknowledgements
+## 🙏 Acknowledgements
 
 We thank the open-source community and the authors of:
 
