@@ -73,7 +73,7 @@ High Discriminative Span indicates that synthetic transformations capture task-r
 
 ### Method Pipeline
 
-![Discriminative Span Pipeline Diagram](./diagrams/final_pipeline.png)
+![Discriminative Span Pipeline Diagram](/diagrams/final_pipeline.png)
 
 ---
 
