@@ -49,7 +49,7 @@ ax.text(
     10.5,
     5.55,
 
-    "Low-Rank Approximation of Difference Vector Space",
+    "Low-Rank Approximation of Difference Vector Matrix",
 
     fontsize=23,
     ha='center',
